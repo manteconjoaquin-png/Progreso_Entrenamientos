@@ -804,16 +804,45 @@
 
       function appendEditButton(row, activity, session) {
         const cell = document.createElement("td");
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "btn btn-sm btn-outline-primary";
-        button.textContent = "📝 Editar";
-        button.addEventListener("click", (event) => {
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "btn btn-sm btn-outline-primary";
+        editButton.textContent = "📝 Editar";
+        editButton.addEventListener("click", (event) => {
           event.preventDefault();
           openEditModal(activity, session);
         });
-        cell.append(button);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "btn btn-sm btn-outline-danger ms-1";
+        deleteButton.textContent = "🗑️ Eliminar";
+        deleteButton.addEventListener("click", (event) => {
+          event.preventDefault();
+          deleteSession(activity, session.id);
+        });
+
+        cell.append(editButton, deleteButton);
         row.append(cell);
+      }
+
+      async function deleteSession(activity, id) {
+        if (!confirm("¿Seguro que quieres borrar este registro?")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/tracker/${activity}/${id}`, {
+            method: "DELETE",
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) {
+            throw new Error("No se pudo borrar el registro. Inténtalo de nuevo.");
+          }
+          renderHistory(await fetchHistoryData());
+        } catch (error) {
+          showHistoryError(error);
+        }
       }
 
       function renderEmptyRow(body, columnCount) {

@@ -184,6 +184,23 @@ def update_jiujitsu_session(
     return JiuJitsuSessionResponse.model_validate(updated_session)
 
 
+@router.delete("/jiujitsu/{session_id}", status_code=204)
+def delete_jiujitsu_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+) -> None:
+    session = (
+        db.query(JiuJitsuSession)
+        .filter(JiuJitsuSession.id == session_id)
+        .first()
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    db.delete(session)
+    db.commit()
+
+
 @router.put("/padel/{session_id}", response_model=PadelSessionResponse)
 def update_padel_session(
     session_id: int,
@@ -209,6 +226,23 @@ def update_padel_session(
     return PadelSessionResponse.model_validate(updated_session)
 
 
+@router.delete("/padel/{session_id}", status_code=204)
+def delete_padel_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+) -> None:
+    session = (
+        db.query(PadelSession)
+        .filter(PadelSession.id == session_id)
+        .first()
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    db.delete(session)
+    db.commit()
+
+
 @router.put("/trading/{session_id}", response_model=TradingSessionResponse)
 def update_trading_session(
     session_id: int,
@@ -225,6 +259,23 @@ def update_trading_session(
 
     updated_session = _update_record(db, db_session, session_data)
     return TradingSessionResponse.model_validate(updated_session)
+
+
+@router.delete("/trading/{session_id}", status_code=204)
+def delete_trading_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+) -> None:
+    session = (
+        db.query(TradingSession)
+        .filter(TradingSession.id == session_id)
+        .first()
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    db.delete(session)
+    db.commit()
 
 
 @router.get("/history", response_model=dict[str, Any])
