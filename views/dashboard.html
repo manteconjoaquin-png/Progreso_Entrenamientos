@@ -246,7 +246,7 @@
       .dynamic-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
       .dynamic-heading h4 { margin: 0; color: var(--ultramarine); font-size: 14px; font-weight: 700; }
       .small-action { border: 0; color: var(--ultramarine); background: transparent; font-size: 13px; font-weight: 600; }
-      .dynamic-row { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 12px; margin-bottom: 12px; }
+      .dynamic-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; align-items: end; gap: 12px; margin-bottom: 12px; }
       .dynamic-row .form-label { display: block; }
       .remove-row {
         width: 40px;
@@ -260,6 +260,16 @@
       .form-feedback.success { color: #23734b; }
       .form-feedback.error { color: #b43e3e; }
       .history-panel { overflow: hidden; }
+      .win-rate-card { border: 1px solid var(--bronze-line); border-left: 3px solid var(--ultramarine); border-radius: 8px; background: var(--white); }
+      .win-rate-card .card-body { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 18px; }
+      .win-rate-label { color: var(--muted); font-size: 13px; font-weight: 600; }
+      .win-rate-value { color: var(--ultramarine); font-family: "DM Serif Display", Georgia, serif; font-size: 26px; line-height: 1; }
+      .analytics-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, 0.88); }
+      .analytics-section { min-width: 0; }
+      .analytics-heading { margin: 0 0 10px; color: var(--ink); font-size: 12px; font-weight: 700; }
+      .analytics-rate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 6px 16px; }
+      .analytics-rate { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid #efeee9; color: var(--muted); font-size: 11px; }
+      .analytics-rate strong { color: var(--ink); font-size: 11px; font-weight: 700; white-space: nowrap; }
       .history-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px 0; }
       .nav-tabs { gap: 4px; padding: 0 24px; border-bottom-color: var(--line); }
       .nav-tabs .nav-link { border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 13px 14px; color: var(--muted); font-size: 13px; font-weight: 600; }
@@ -281,6 +291,7 @@
         .choice-card { min-height: 122px; padding: 18px; }
         .section-title { font-size: 29px; }
         .form-panel { padding: 21px 17px; }
+        .analytics-panel { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
         .history-toolbar { align-items: flex-start; padding: 18px 16px 0; }
         .nav-tabs { flex-wrap: nowrap; overflow-x: auto; padding: 0 12px; }
         .nav-tabs .nav-link { white-space: nowrap; }
@@ -289,10 +300,11 @@
         .mobile-scroll-note { display: block; }
       }
       @media (max-width: 480px) {
-        .dynamic-row { grid-template-columns: 1fr auto; }
+        .dynamic-row { grid-template-columns: 1fr 1fr auto; }
         .dynamic-row .row-primary { grid-column: 1 / -1; }
         .dynamic-row .row-secondary { grid-column: 1; }
-        .dynamic-row .remove-row { grid-column: 2; grid-row: 2; }
+        .dynamic-row .row-tertiary { grid-column: 2; }
+        .dynamic-row .remove-row { grid-column: 3; grid-row: 2; }
         .today-label { display: none; }
         .welcome-title { font-size: 35px; }
       }
@@ -378,6 +390,14 @@
               <input class="form-control" id="jiuDate" name="fecha" type="date" required>
             </div>
             <div class="col-sm-6 field-block">
+              <label class="form-label" for="jiujitsu_horario">Horario</label>
+              <select class="form-select" id="jiujitsu_horario" name="horario" required>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde" selected>Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
               <label class="form-label" for="jiuCondition">Estado físico</label>
               <input class="form-control" id="jiuCondition" name="estado_fisico" type="text" maxlength="120" placeholder="Ej. Bien, con energía" required>
             </div>
@@ -412,6 +432,21 @@
               <input class="form-control" id="padelDate" name="fecha" type="date" required>
             </div>
             <div class="col-sm-6 field-block">
+              <label class="form-label" for="padel_horario">Horario</label>
+              <select class="form-select" id="padel_horario" name="horario" required>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde" selected>Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="padelSide">Lado de Juego</label>
+              <select class="form-select" id="padelSide" name="lado_juego" required>
+                <option value="Derecha" selected>Derecha</option>
+                <option value="Revés">Revés</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
               <label class="form-label" for="padelType">Tipo</label>
               <select class="form-select" id="padelType" name="tipo" required>
                 <option value="Partido">Partido</option>
@@ -428,7 +463,12 @@
             </div>
             <div class="col-12 field-block">
               <label class="form-label" for="padelResult">Resultado</label>
-              <input class="form-control" id="padelResult" name="resultado" type="text" maxlength="160" placeholder="Ej. Victoria 6-4, 6-3" required>
+              <select class="form-select" id="padelResult" name="resultado" required>
+                <option value="" selected disabled>Selecciona un resultado</option>
+                <option value="Victoria">Victoria</option>
+                <option value="Derrota">Derrota</option>
+                <option value="Empate">Empate</option>
+              </select>
             </div>
           </div>
           <div class="field-block">
@@ -515,22 +555,81 @@
           <div id="historyFeedback" class="history-feedback" aria-live="polite"></div>
           <div class="tab-content">
             <div class="tab-pane fade show active" id="jiujitsu-pane" role="tabpanel" aria-labelledby="jiujitsu-tab" tabindex="0">
+              <div class="card mb-3 win-rate-card">
+                <div class="card-body">
+                  <span class="win-rate-label">🏆 Porcentaje de Victorias Global</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <strong class="win-rate-value" id="jiujitsuWinRate">0%</strong>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#detallesHorarioJiuJitsu" aria-expanded="false" aria-controls="detallesHorarioJiuJitsu">📝 Detalles</button>
+                  </div>
+                </div>
+              </div>
+              <div class="collapse mb-3" id="detallesHorarioJiuJitsu">
+                <div class="analytics-panel">
+                  <section class="analytics-section" aria-labelledby="jiuBeltHeading">
+                    <h3 class="analytics-heading" id="jiuBeltHeading">Victorias por cinturón</h3>
+                    <div class="analytics-rate-grid" id="jiuBeltRates"></div>
+                  </section>
+                  <section class="analytics-section" aria-labelledby="jiuBeltScheduleHeading">
+                    <h3 class="analytics-heading" id="jiuBeltScheduleHeading">Cinturón + horario</h3>
+                    <div class="analytics-rate-grid" id="jiuBeltScheduleRates"></div>
+                  </section>
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table">
-                  <thead><tr><th>Fecha</th><th>Estado físico</th><th>Rivales</th><th>Resultados</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+                  <thead><tr><th>Fecha</th><th>Horario</th><th>Estado físico</th><th>Combates de la Sesión</th><th>Comentarios</th><th>Acciones</th></tr></thead>
                   <tbody id="jiujitsuRows"></tbody>
                 </table>
               </div>
             </div>
             <div class="tab-pane fade" id="padel-pane" role="tabpanel" aria-labelledby="padel-tab" tabindex="0">
+              <div class="card mb-3 win-rate-card">
+                <div class="card-body">
+                  <span class="win-rate-label">🏆 Porcentaje de Victorias Global</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <strong class="win-rate-value" id="padelWinRate">0%</strong>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#detallesHorarioPadel" aria-expanded="false" aria-controls="detallesHorarioPadel">📝 Detalles</button>
+                  </div>
+                </div>
+              </div>
+              <div class="collapse mb-3" id="detallesHorarioPadel">
+                <div class="analytics-panel">
+                  <section class="analytics-section" aria-labelledby="padelSideHeading">
+                    <h3 class="analytics-heading" id="padelSideHeading">Victorias por lado de juego</h3>
+                    <div class="analytics-rate-grid" id="padelSideRates"></div>
+                  </section>
+                  <section class="analytics-section" aria-labelledby="padelSideScheduleHeading">
+                    <h3 class="analytics-heading" id="padelSideScheduleHeading">Lado + horario</h3>
+                    <div class="analytics-rate-grid" id="padelSideScheduleRates"></div>
+                  </section>
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table">
-                  <thead><tr><th>Fecha</th><th>Tipo</th><th>Compañero</th><th>Errores</th><th>Rivales</th><th>Resultado</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+                  <thead><tr><th>Fecha</th><th>Horario</th><th>Lado</th><th>Tipo</th><th>Compañero</th><th>Errores</th><th>Rivales</th><th>Resultado</th><th>Comentarios</th><th>Acciones</th></tr></thead>
                   <tbody id="padelRows"></tbody>
                 </table>
               </div>
             </div>
             <div class="tab-pane fade" id="trading-pane" role="tabpanel" aria-labelledby="trading-tab" tabindex="0">
+              <div class="card mb-3 win-rate-card">
+                <div class="card-body">
+                  <span class="win-rate-label">📈 Porcentaje de Acierto (Win Rate)</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <strong class="win-rate-value" id="tradingWinRate">0%</strong>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#detallesTrading" aria-expanded="false" aria-controls="detallesTrading">📝 Detalles</button>
+                  </div>
+                </div>
+              </div>
+              <div class="collapse mb-3" id="detallesTrading">
+                <div class="analytics-panel">
+                  <section class="analytics-section" aria-labelledby="tradingNetProfitHeading">
+                    <h3 class="analytics-heading" id="tradingNetProfitHeading">💰 Beneficio/Pérdida Total Histórica</h3>
+                    <strong class="fs-5" id="tradingNetProfit">0,00 €</strong>
+                  </section>
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table">
                   <thead><tr><th>Fecha</th><th>Activo</th><th>P&amp;L</th><th>Aprendizaje</th><th>Comentarios</th><th>Acciones</th></tr></thead>
@@ -570,6 +669,15 @@
       const pnlFormatter = new Intl.NumberFormat("es-ES", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+      });
+      const currencyFormatter = new Intl.NumberFormat("es-ES", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      const winRateFormatter = new Intl.NumberFormat("es-ES", {
+        maximumFractionDigits: 1,
       });
 
       function setBodyTheme(activity, isHistory = false) {
@@ -624,7 +732,53 @@
         if (!response.ok) {
           throw new Error("No se pudo cargar el historial. Inténtalo de nuevo.");
         }
-        return response.json();
+        const history = await response.json();
+        const metrics = history.metrics || {};
+        document.getElementById("jiujitsuWinRate").textContent = formatWinRate(
+          metrics.jiujitsu_win_rate,
+        );
+        document.getElementById("padelWinRate").textContent = formatWinRate(
+          metrics.padel_win_rate,
+        );
+        document.getElementById("tradingWinRate").textContent = formatWinRate(
+          metrics.trading_win_rate,
+        );
+        const tradingNetProfit = Number(metrics.trading_net_profit);
+        const tradingNetProfitElement = document.getElementById("tradingNetProfit");
+        const safeTradingNetProfit = Number.isFinite(tradingNetProfit) ? tradingNetProfit : 0;
+        tradingNetProfitElement.textContent = currencyFormatter.format(safeTradingNetProfit);
+        tradingNetProfitElement.classList.remove("text-success", "text-danger");
+        tradingNetProfitElement.classList.add(
+          safeTradingNetProfit >= 0 ? "text-success" : "text-danger",
+        );
+        renderRateGrid("jiuBeltRates", metrics.win_rate_cinturon);
+        renderRateGrid("jiuBeltScheduleRates", metrics.win_rate_cinturon_horario);
+        renderRateGrid("padelSideRates", metrics.win_rate_lado);
+        renderRateGrid("padelSideScheduleRates", metrics.win_rate_lado_horario);
+        return history;
+      }
+
+      function formatWinRate(value) {
+        const rate = Number(value);
+        if (!Number.isFinite(rate)) {
+          return "0%";
+        }
+        return `${winRateFormatter.format(rate)}%`;
+      }
+
+      function renderRateGrid(containerId, rates = {}) {
+        const container = document.getElementById(containerId);
+        container.replaceChildren();
+        for (const [label, rate] of Object.entries(rates || {})) {
+          const item = document.createElement("div");
+          item.className = "analytics-rate";
+          const name = document.createElement("span");
+          name.textContent = label.replaceAll("_", " · ");
+          const value = document.createElement("strong");
+          value.textContent = formatWinRate(rate);
+          item.append(name, value);
+          container.append(item);
+        }
       }
 
       function sortByDateDescending(records) {
@@ -666,14 +820,9 @@
 
       function renderJiuJitsu(records) {
         const body = document.getElementById("jiujitsuRows");
-        const headerRow = body.closest("table").querySelector("thead tr");
-        if (headerRow.children.length === 6) {
-          headerRow.children[2].textContent = "Combates de la Sesión";
-          headerRow.deleteCell(3);
-        }
         body.replaceChildren();
         if (records.length === 0) {
-          renderEmptyRow(body, 5);
+          renderEmptyRow(body, 6);
           return;
         }
         for (const session of sortByDateDescending(records)) {
@@ -684,18 +833,23 @@
             const item = document.createElement("li");
             const rivalName = document.createElement("strong");
             rivalName.textContent = match.rival;
+            const beltBadge = document.createElement("span");
+            beltBadge.className = "badge bg-light text-secondary border ms-1";
+            beltBadge.textContent = match.rival_cinturon || "Blanco";
             const resultBadge = document.createElement("span");
             resultBadge.className = "badge bg-light text-dark border";
             resultBadge.textContent = match.resultado;
             item.append(
               document.createTextNode("• "),
               rivalName,
+              beltBadge,
               document.createTextNode(" - "),
               resultBadge,
             );
             combatList.append(item);
           }
           appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.horario, "text-nowrap fw-medium text-body-secondary");
           appendCell(row, session.estado_fisico);
           const combatCell = document.createElement("td");
           combatCell.append(combatList);
@@ -710,7 +864,7 @@
         const body = document.getElementById("padelRows");
         body.replaceChildren();
         if (records.length === 0) {
-          renderEmptyRow(body, 8);
+          renderEmptyRow(body, 10);
           return;
         }
         for (const session of sortByDateDescending(records)) {
@@ -720,6 +874,8 @@
             rivals.push(rival.rival_name);
           }
           appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.horario, "text-nowrap fw-medium text-body-secondary");
+          appendCell(row, session.lado_juego);
           appendCell(row, session.tipo);
           appendCell(row, session.compañero);
           appendCell(row, session.errores);
@@ -777,14 +933,18 @@
         let modalId;
         if (activity === "jiujitsu") {
           const form = document.getElementById("editJiuJitsuForm");
-          const matchLines = [];
+          const matchesContainer = document.getElementById("editJiuJitsuMatches");
+          matchesContainer.replaceChildren();
           for (const match of session.matches || []) {
-            matchLines.push(`${match.rival} | ${match.resultado}`);
+            addJiuMatchRow(matchesContainer, match);
+          }
+          if (matchesContainer.children.length === 0) {
+            addJiuMatchRow(matchesContainer);
           }
           form.elements.session_id.value = session.id;
           form.elements.fecha.value = session.fecha;
+          form.elements.horario.value = session.horario;
           form.elements.estado_fisico.value = session.estado_fisico || "";
-          form.elements.matches.value = matchLines.join("\n");
           form.elements.comentarios.value = session.comentarios || "";
           modalId = "editJiuJitsuModal";
         } else if (activity === "padel") {
@@ -795,6 +955,8 @@
           }
           form.elements.session_id.value = session.id;
           form.elements.fecha.value = session.fecha;
+          form.elements.horario.value = session.horario;
+          form.elements.lado_juego.value = session.lado_juego || "Derecha";
           form.elements.tipo.value = session.tipo;
           form.elements["compañero"].value = session.compañero || "";
           form.elements.errores.value = session.errores;
@@ -816,23 +978,6 @@
         modalElement.querySelector(".form-feedback").textContent = "";
         const myModal = new bootstrap.Modal(document.getElementById(modalId));
         myModal.show();
-      }
-
-      function parseJiuJitsuMatches(text) {
-        const matches = [];
-        for (const line of text.split(/\r?\n/)) {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) continue;
-          const separatorIndex = trimmedLine.indexOf("|");
-          if (separatorIndex < 1 || separatorIndex === trimmedLine.length - 1) {
-            throw new Error("Cada combate debe tener el formato rival | resultado.");
-          }
-          matches.push({
-            rival: trimmedLine.slice(0, separatorIndex).trim(),
-            resultado: trimmedLine.slice(separatorIndex + 1).trim(),
-          });
-        }
-        return matches;
       }
 
       function parsePadelRivals(text) {
@@ -885,7 +1030,7 @@
         return button;
       }
 
-      function addJiuMatchRow() {
+      function addJiuMatchRow(container = document.getElementById("jiuMatches"), match = null) {
         const row = document.createElement("div");
         row.className = "dynamic-row";
         row.innerHTML = `
@@ -894,12 +1039,32 @@
             <input class="form-control" type="text" data-match-rival maxlength="120" required>
           </div>
           <div class="row-secondary">
+            <label class="form-label">Cinturón</label>
+            <select class="form-select" data-match-belt required>
+              <option value="Blanco" selected>Blanco</option>
+              <option value="Azul">Azul</option>
+              <option value="Morado">Morado</option>
+              <option value="Marrón">Marrón</option>
+              <option value="Negro">Negro</option>
+            </select>
+          </div>
+          <div class="row-tertiary">
             <label class="form-label">Resultado</label>
-            <input class="form-control" type="text" data-match-result maxlength="120" required>
+            <select class="form-select" data-match-result required>
+              <option value="" selected disabled>Selecciona un resultado</option>
+              <option value="Victoria">Victoria</option>
+              <option value="Derrota">Derrota</option>
+              <option value="Empate">Empate</option>
+            </select>
           </div>
         `;
+        if (match) {
+          row.querySelector("[data-match-rival]").value = match.rival || "";
+          row.querySelector("[data-match-belt]").value = match.rival_cinturon || "Blanco";
+          row.querySelector("[data-match-result]").value = match.resultado || "";
+        }
         row.append(makeRemoveButton("Eliminar combate"));
-        document.getElementById("jiuMatches").append(row);
+        container.append(row);
       }
 
       function addPadelRivalRow() {
@@ -993,7 +1158,7 @@
       document.querySelectorAll("[data-activity]").forEach((button) => {
         button.addEventListener("click", () => selectActivity(button.dataset.activity));
       });
-      document.getElementById("addMatch").addEventListener("click", addJiuMatchRow);
+      document.getElementById("addMatch").addEventListener("click", () => addJiuMatchRow());
       document.getElementById("addRival").addEventListener("click", addPadelRivalRow);
       document.getElementById("refreshHistory").addEventListener("click", refreshHistory);
       document.querySelectorAll("#historyTabs [data-bs-toggle='tab']").forEach((tab) => {
@@ -1011,11 +1176,13 @@
         for (const row of document.querySelectorAll("#jiuMatches .dynamic-row")) {
           matches.push({
             rival: row.querySelector("[data-match-rival]").value.trim(),
+            rival_cinturon: row.querySelector("[data-match-belt]").value,
             resultado: row.querySelector("[data-match-result]").value.trim(),
           });
         }
         const saved = await postActivity(form, "jiujitsu", {
           fecha: form.elements.fecha.value,
+          horario: form.elements.horario.value,
           estado_fisico: form.elements.estado_fisico.value.trim(),
           comentarios: form.elements.comentarios.value.trim() || null,
           matches,
@@ -1034,6 +1201,8 @@
         }
         const saved = await postActivity(form, "padel", {
           fecha: form.elements.fecha.value,
+          horario: form.elements.horario.value,
+          lado_juego: form.elements.lado_juego.value,
           tipo: form.elements.tipo.value,
           compañero: form.elements["compañero"].value.trim(),
           errores: Number(form.elements.errores.value),
@@ -1059,19 +1228,25 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("editAddJiuMatch").addEventListener("click", () => {
+          addJiuMatchRow(document.getElementById("editJiuJitsuMatches"));
+        });
+
         document.getElementById("editJiuJitsuForm").addEventListener("submit", async (event) => {
           event.preventDefault();
           const form = event.currentTarget;
           if (!form.reportValidity()) return;
-          let matches;
-          try {
-            matches = parseJiuJitsuMatches(form.elements.matches.value);
-          } catch (error) {
-            setFormFeedback(form, error.message, true);
-            return;
+          const matches = [];
+          for (const row of form.querySelectorAll("#editJiuJitsuMatches .dynamic-row")) {
+            matches.push({
+              rival: row.querySelector("[data-match-rival]").value.trim(),
+              rival_cinturon: row.querySelector("[data-match-belt]").value,
+              resultado: row.querySelector("[data-match-result]").value,
+            });
           }
           await putActivity(form, "jiujitsu", {
             fecha: form.elements.fecha.value,
+            horario: form.elements.horario.value,
             estado_fisico: form.elements.estado_fisico.value.trim(),
             comentarios: form.elements.comentarios.value.trim() || null,
             matches,
@@ -1084,6 +1259,8 @@
           if (!form.reportValidity()) return;
           await putActivity(form, "padel", {
             fecha: form.elements.fecha.value,
+            horario: form.elements.horario.value,
+            lado_juego: form.elements.lado_juego.value,
             tipo: form.elements.tipo.value,
             compañero: form.elements["compañero"].value.trim(),
             errores: Number(form.elements.errores.value),
@@ -1109,7 +1286,7 @@
 
       document.getElementById("jiujitsuRows").replaceChildren();
       renderEmptyRow(document.getElementById("jiujitsuRows"), 6);
-      renderEmptyRow(document.getElementById("padelRows"), 8);
+      renderEmptyRow(document.getElementById("padelRows"), 10);
       renderEmptyRow(document.getElementById("tradingRows"), 6);
       setTodayDates();
       addJiuMatchRow();
@@ -1132,12 +1309,23 @@
                   <input class="form-control" id="editJiuJitsuDate" name="fecha" type="date" required>
                 </div>
                 <div class="col-sm-6 field-block">
+                  <label class="form-label" for="edit_jiujitsu_horario">Horario</label>
+                  <select class="form-select" id="edit_jiujitsu_horario" name="horario" required>
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Noche">Noche</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
                   <label class="form-label" for="editJiuJitsuCondition">Estado físico</label>
                   <input class="form-control" id="editJiuJitsuCondition" name="estado_fisico" type="text" required>
                 </div>
                 <div class="col-12 field-block">
-                  <label class="form-label" for="editJiuJitsuMatches">Combates, uno por línea (rival | resultado)</label>
-                  <textarea class="form-control" id="editJiuJitsuMatches" name="matches" rows="4"></textarea>
+                  <div class="dynamic-heading">
+                    <h4>Combates</h4>
+                    <button class="small-action" id="editAddJiuMatch" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Añadir combate</button>
+                  </div>
+                  <div id="editJiuJitsuMatches" class="dynamic-list"></div>
                 </div>
                 <div class="col-12 field-block">
                   <label class="form-label" for="editJiuJitsuComments">Comentarios / Notas</label>
@@ -1171,6 +1359,21 @@
                   <input class="form-control" id="editPadelDate" name="fecha" type="date" required>
                 </div>
                 <div class="col-sm-6 field-block">
+                  <label class="form-label" for="edit_padel_horario">Horario</label>
+                  <select class="form-select" id="edit_padel_horario" name="horario" required>
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Noche">Noche</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editPadelSide">Lado de Juego</label>
+                  <select class="form-select" id="editPadelSide" name="lado_juego" required>
+                    <option value="Derecha">Derecha</option>
+                    <option value="Revés">Revés</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
                   <label class="form-label" for="editPadelType">Tipo</label>
                   <select class="form-select" id="editPadelType" name="tipo" required>
                     <option value="Partido">Partido</option>
@@ -1187,7 +1390,12 @@
                 </div>
                 <div class="col-12 field-block">
                   <label class="form-label" for="editPadelResult">Resultado</label>
-                  <input class="form-control" id="editPadelResult" name="resultado" type="text" required>
+                  <select class="form-select" id="editPadelResult" name="resultado" required>
+                    <option value="" disabled>Selecciona un resultado</option>
+                    <option value="Victoria">Victoria</option>
+                    <option value="Derrota">Derrota</option>
+                    <option value="Empate">Empate</option>
+                  </select>
                 </div>
                 <div class="col-12 field-block">
                   <label class="form-label" for="editPadelRivals">Rivales, uno por línea</label>

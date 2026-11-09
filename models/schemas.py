@@ -5,23 +5,62 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 
 
+def _validate_horario(value: object) -> str:
+    if not isinstance(value, str) or value not in {"Mañana", "Tarde", "Noche"}:
+        raise ValueError("horario debe ser 'Mañana', 'Tarde' o 'Noche'")
+    return value
+
+
+def _validate_rival_cinturon(value: object) -> str:
+    valid_belts = {"Blanco", "Azul", "Morado", "Marrón", "Negro"}
+    if not isinstance(value, str) or value not in valid_belts:
+        raise ValueError(
+            "rival_cinturon debe ser 'Blanco', 'Azul', 'Morado', 'Marrón' o 'Negro'"
+        )
+    return value
+
+
+def _validate_lado_juego(value: object) -> str:
+    if not isinstance(value, str) or value not in {"Derecha", "Revés"}:
+        raise ValueError("lado_juego debe ser 'Derecha' o 'Revés'")
+    return value
+
+
 class JiuJitsuMatchCreate(BaseModel):
     rival: str
+    rival_cinturon: str = "Blanco"
     resultado: str
+
+    @field_validator("rival_cinturon", mode="before")
+    @classmethod
+    def validate_rival_cinturon(cls, value: object) -> str:
+        return _validate_rival_cinturon(value)
 
 
 class JiuJitsuSessionCreate(BaseModel):
     fecha: date
+    horario: str
     estado_fisico: str
     comentarios: Optional[str] = None
     matches: list[JiuJitsuMatchCreate] = Field(default_factory=list)
+
+    @field_validator("horario", mode="before")
+    @classmethod
+    def validate_horario(cls, value: object) -> str:
+        return _validate_horario(value)
 
 
 class JiuJitsuMatchResponse(BaseModel):
     id: int
     session_id: int
     rival: str
+    rival_cinturon: str
     resultado: str
+
+    @field_validator("rival_cinturon", mode="before")
+    @classmethod
+    def validate_rival_cinturon(cls, value: object) -> str:
+        return _validate_rival_cinturon(value)
 
     class Config:
         from_attributes = True
@@ -30,6 +69,7 @@ class JiuJitsuMatchResponse(BaseModel):
 class JiuJitsuSessionResponse(BaseModel):
     id: int
     fecha: date
+    horario: str
     estado_fisico: str
     comentarios: Optional[str] = None
     matches: list[JiuJitsuMatchResponse]
@@ -40,19 +80,37 @@ class JiuJitsuSessionResponse(BaseModel):
 
 class JiuJitsuSessionUpdate(BaseModel):
     fecha: Optional[date] = None
+    horario: str
     estado_fisico: Optional[str] = None
     comentarios: Optional[str] = None
     matches: Optional[list[JiuJitsuMatchCreate]] = None
 
+    @field_validator("horario", mode="before")
+    @classmethod
+    def validate_horario(cls, value: object) -> str:
+        return _validate_horario(value)
+
 
 class PadelSessionCreate(BaseModel):
     fecha: date
+    horario: str
+    lado_juego: str = "Derecha"
     tipo: Literal["Partido", "Entrenamiento"]
     compañero: str
     errores: int = Field(ge=0)
     resultado: str
     comentarios: Optional[str] = None
     rivals: list[str] = Field(default_factory=list)
+
+    @field_validator("horario", mode="before")
+    @classmethod
+    def validate_horario(cls, value: object) -> str:
+        return _validate_horario(value)
+
+    @field_validator("lado_juego", mode="before")
+    @classmethod
+    def validate_lado_juego(cls, value: object) -> str:
+        return _validate_lado_juego(value)
 
 
 class PadelRivalResponse(BaseModel):
@@ -67,6 +125,8 @@ class PadelRivalResponse(BaseModel):
 class PadelSessionResponse(BaseModel):
     id: int
     fecha: date
+    horario: str
+    lado_juego: str
     tipo: Literal["Partido", "Entrenamiento"]
     compañero: str
     errores: int
@@ -74,18 +134,35 @@ class PadelSessionResponse(BaseModel):
     comentarios: Optional[str] = None
     rivals: list[PadelRivalResponse]
 
+    @field_validator("lado_juego", mode="before")
+    @classmethod
+    def validate_lado_juego(cls, value: object) -> str:
+        return _validate_lado_juego(value)
+
     class Config:
         from_attributes = True
 
 
 class PadelSessionUpdate(BaseModel):
     fecha: Optional[date] = None
+    horario: str
+    lado_juego: Optional[str] = None
     tipo: Optional[Literal["Partido", "Entrenamiento"]] = None
     compañero: Optional[str] = None
     errores: Optional[int] = Field(default=None, ge=0)
     resultado: Optional[str] = None
     comentarios: Optional[str] = None
     rivals: Optional[list[str]] = None
+
+    @field_validator("horario", mode="before")
+    @classmethod
+    def validate_horario(cls, value: object) -> str:
+        return _validate_horario(value)
+
+    @field_validator("lado_juego", mode="before")
+    @classmethod
+    def validate_lado_juego(cls, value: object) -> str:
+        return _validate_lado_juego(value)
 
 
 class TradingSessionCreate(BaseModel):

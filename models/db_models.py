@@ -13,6 +13,12 @@ class JiuJitsuSession(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     fecha: Mapped[date] = mapped_column(Date, nullable=False)
+    horario: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="Tarde",
+        server_default="Tarde",
+    )
     estado_fisico: Mapped[str] = mapped_column(String, nullable=False)
     comentarios: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
@@ -31,6 +37,12 @@ class JiuJitsuMatch(Base):
         nullable=False,
     )
     rival: Mapped[str] = mapped_column(String, nullable=False)
+    rival_cinturon: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="Blanco",
+        server_default="Blanco",
+    )
     resultado: Mapped[str] = mapped_column(String, nullable=False)
 
     session: Mapped[JiuJitsuSession] = relationship(back_populates="matches")
@@ -47,6 +59,18 @@ class PadelSession(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     fecha: Mapped[date] = mapped_column(Date, nullable=False)
+    horario: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="Tarde",
+        server_default="Tarde",
+    )
+    lado_juego: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="Derecha",
+        server_default="Derecha",
+    )
     tipo: Mapped[str] = mapped_column(String, nullable=False)
     compañero: Mapped[str] = mapped_column(String, nullable=False)
     errores: Mapped[int] = mapped_column(Integer, nullable=False)

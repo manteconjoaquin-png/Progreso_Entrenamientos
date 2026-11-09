@@ -1,9 +1,10 @@
 from collections.abc import Generator
+from decimal import Decimal
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from config.database import SessionLocal
 from models.db_models import (
@@ -46,6 +47,7 @@ def _build_jiujitsu_matches(
         db_matches.append(
             JiuJitsuMatch(
                 rival=match.rival,
+                rival_cinturon=match.rival_cinturon,
                 resultado=match.resultado,
             )
         )
@@ -104,6 +106,7 @@ def create_jiujitsu_session(
 ) -> JiuJitsuSessionResponse:
     db_session = JiuJitsuSession(
         fecha=session_data.fecha,
+        horario=session_data.horario,
         estado_fisico=session_data.estado_fisico,
         comentarios=session_data.comentarios,
         matches=_build_jiujitsu_matches(session_data.matches),
@@ -123,6 +126,8 @@ def create_padel_session(
 ) -> PadelSessionResponse:
     db_session = PadelSession(
         fecha=session_data.fecha,
+        horario=session_data.horario,
+        lado_juego=session_data.lado_juego,
         tipo=session_data.tipo,
         compañero=session_data.compañero,
         errores=session_data.errores,
@@ -222,8 +227,8 @@ def update_trading_session(
     return TradingSessionResponse.model_validate(updated_session)
 
 
-@router.get("/history", response_model=dict[str, list[dict[str, Any]]])
-def get_history(db: Session = Depends(get_db)) -> dict[str, list[dict[str, Any]]]:
+@router.get("/history", response_model=dict[str, Any])
+def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
     jiujitsu_records = (
         db.query(JiuJitsuSession)
         .order_by(JiuJitsuSession.fecha.desc())
@@ -239,9 +244,206 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, list[dict[str, Any]]
         .order_by(TradingSession.fecha.desc())
         .all()
     )
+    jiujitsu_matches = (
+        db.query(JiuJitsuMatch)
+        .options(joinedload(JiuJitsuMatch.session))
+        .all()
+    )
+
+    horarios = ("Mañana", "Tarde", "Noche")
+    cinturones = ("Blanco", "Azul", "Morado", "Marrón", "Negro")
+    lados = ("Derecha", "Revés")
+
+    jiujitsu_total = 0
+    jiujitsu_victories = 0
+    jiujitsu_horarios_totales: dict[str, int] = {}
+    jiujitsu_horarios_victorias: dict[str, int] = {}
+    for horario in horarios:
+        jiujitsu_horarios_totales[horario] = 0
+        jiujitsu_horarios_victorias[horario] = 0
+
+    jiujitsu_cinturon_totales: dict[str, int] = {}
+    jiujitsu_cinturon_victorias: dict[str, int] = {}
+    jiujitsu_cinturon_horario_totales: dict[str, int] = {}
+    jiujitsu_cinturon_horario_victorias: dict[str, int] = {}
+    for cinturon in cinturones:
+        jiujitsu_cinturon_totales[cinturon] = 0
+        jiujitsu_cinturon_victorias[cinturon] = 0
+        for horario in horarios:
+            cruce = f"{cinturon}_{horario}"
+            jiujitsu_cinturon_horario_totales[cruce] = 0
+            jiujitsu_cinturon_horario_victorias[cruce] = 0
+
+    for match in jiujitsu_matches:
+        jiujitsu_total += 1
+        if match.resultado == "Victoria":
+            jiujitsu_victories += 1
+
+        horario = match.session.horario
+        cinturon = match.rival_cinturon
+        if horario in jiujitsu_horarios_totales:
+            jiujitsu_horarios_totales[horario] += 1
+            if match.resultado == "Victoria":
+                jiujitsu_horarios_victorias[horario] += 1
+
+        if cinturon in jiujitsu_cinturon_totales:
+            jiujitsu_cinturon_totales[cinturon] += 1
+            if match.resultado == "Victoria":
+                jiujitsu_cinturon_victorias[cinturon] += 1
+
+            if horario in horarios:
+                cruce = f"{cinturon}_{horario}"
+                jiujitsu_cinturon_horario_totales[cruce] += 1
+                if match.resultado == "Victoria":
+                    jiujitsu_cinturon_horario_victorias[cruce] += 1
+
+    padel_total = 0
+    padel_victories = 0
+    padel_horarios_totales: dict[str, int] = {}
+    padel_horarios_victorias: dict[str, int] = {}
+    for horario in horarios:
+        padel_horarios_totales[horario] = 0
+        padel_horarios_victorias[horario] = 0
+
+    padel_lado_totales: dict[str, int] = {}
+    padel_lado_victorias: dict[str, int] = {}
+    padel_lado_horario_totales: dict[str, int] = {}
+    padel_lado_horario_victorias: dict[str, int] = {}
+    for lado in lados:
+        padel_lado_totales[lado] = 0
+        padel_lado_victorias[lado] = 0
+        for horario in horarios:
+            cruce = f"{lado}_{horario}"
+            padel_lado_horario_totales[cruce] = 0
+            padel_lado_horario_victorias[cruce] = 0
+
+    for session in padel_records:
+        padel_total += 1
+        if session.resultado == "Victoria":
+            padel_victories += 1
+
+        horario = session.horario
+        lado = session.lado_juego
+        if horario in padel_horarios_totales:
+            padel_horarios_totales[horario] += 1
+            if session.resultado == "Victoria":
+                padel_horarios_victorias[horario] += 1
+
+        if lado in padel_lado_totales:
+            padel_lado_totales[lado] += 1
+            if session.resultado == "Victoria":
+                padel_lado_victorias[lado] += 1
+
+            if horario in horarios:
+                cruce = f"{lado}_{horario}"
+                padel_lado_horario_totales[cruce] += 1
+                if session.resultado == "Victoria":
+                    padel_lado_horario_victorias[cruce] += 1
+
+    trading_total = 0
+    trading_wins = 0
+    trading_net_profit = Decimal("0.0")
+    for session in trading_records:
+        trading_total += 1
+        trading_net_profit += session.resultado
+        if session.resultado > 0:
+            trading_wins += 1
+
+    jiujitsu_horarios: dict[str, Decimal] = {}
+    padel_horarios: dict[str, Decimal] = {}
+    for horario in horarios:
+        jiujitsu_horario_win_rate = Decimal("0.0")
+        if jiujitsu_horarios_totales[horario] > 0:
+            jiujitsu_horario_win_rate = (
+                Decimal(jiujitsu_horarios_victorias[horario])
+                / Decimal(jiujitsu_horarios_totales[horario])
+            ) * Decimal("100")
+        jiujitsu_horarios[horario] = jiujitsu_horario_win_rate
+
+        padel_horario_win_rate = Decimal("0.0")
+        if padel_horarios_totales[horario] > 0:
+            padel_horario_win_rate = (
+                Decimal(padel_horarios_victorias[horario])
+                / Decimal(padel_horarios_totales[horario])
+            ) * Decimal("100")
+        padel_horarios[horario] = padel_horario_win_rate
+
+    win_rate_cinturon: dict[str, Decimal] = {}
+    for cinturon in cinturones:
+        win_rate = Decimal("0.0")
+        if jiujitsu_cinturon_totales[cinturon] > 0:
+            win_rate = (
+                Decimal(jiujitsu_cinturon_victorias[cinturon])
+                / Decimal(jiujitsu_cinturon_totales[cinturon])
+            ) * Decimal("100")
+        win_rate_cinturon[cinturon] = win_rate
+
+    win_rate_cinturon_horario: dict[str, Decimal] = {}
+    for cinturon in cinturones:
+        for horario in horarios:
+            cruce = f"{cinturon}_{horario}"
+            win_rate = Decimal("0.0")
+            if jiujitsu_cinturon_horario_totales[cruce] > 0:
+                win_rate = (
+                    Decimal(jiujitsu_cinturon_horario_victorias[cruce])
+                    / Decimal(jiujitsu_cinturon_horario_totales[cruce])
+                ) * Decimal("100")
+            win_rate_cinturon_horario[cruce] = win_rate
+
+    win_rate_lado: dict[str, Decimal] = {}
+    for lado in lados:
+        win_rate = Decimal("0.0")
+        if padel_lado_totales[lado] > 0:
+            win_rate = (
+                Decimal(padel_lado_victorias[lado])
+                / Decimal(padel_lado_totales[lado])
+            ) * Decimal("100")
+        win_rate_lado[lado] = win_rate
+
+    win_rate_lado_horario: dict[str, Decimal] = {}
+    for lado in lados:
+        for horario in horarios:
+            cruce = f"{lado}_{horario}"
+            win_rate = Decimal("0.0")
+            if padel_lado_horario_totales[cruce] > 0:
+                win_rate = (
+                    Decimal(padel_lado_horario_victorias[cruce])
+                    / Decimal(padel_lado_horario_totales[cruce])
+                ) * Decimal("100")
+            win_rate_lado_horario[cruce] = win_rate
+
+    jiujitsu_win_rate = Decimal("0.0")
+    if jiujitsu_total > 0:
+        jiujitsu_win_rate = (
+            Decimal(jiujitsu_victories) / Decimal(jiujitsu_total)
+        ) * Decimal("100")
+
+    padel_win_rate = Decimal("0.0")
+    if padel_total > 0:
+        padel_win_rate = (
+            Decimal(padel_victories) / Decimal(padel_total)
+        ) * Decimal("100")
+
+    trading_win_rate = Decimal("0.0")
+    if trading_total > 0:
+        trading_win_rate = (
+            Decimal(trading_wins) / Decimal(trading_total) * Decimal("100")
+        ).quantize(Decimal("0.01"))
 
     return {
         "jiujitsu": _serialize_records(jiujitsu_records, JiuJitsuSessionResponse),
         "padel": _serialize_records(padel_records, PadelSessionResponse),
         "trading": _serialize_records(trading_records, TradingSessionResponse),
+        "metrics": {
+            "jiujitsu_win_rate": jiujitsu_win_rate,
+            "padel_win_rate": padel_win_rate,
+            "jiujitsu_horarios": jiujitsu_horarios,
+            "padel_horarios": padel_horarios,
+            "win_rate_cinturon": win_rate_cinturon,
+            "win_rate_cinturon_horario": win_rate_cinturon_horario,
+            "win_rate_lado": win_rate_lado,
+            "win_rate_lado_horario": win_rate_lado_horario,
+            "trading_win_rate": trading_win_rate,
+            "trading_net_profit": trading_net_profit,
+        },
     }
