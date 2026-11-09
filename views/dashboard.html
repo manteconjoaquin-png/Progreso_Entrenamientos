@@ -732,8 +732,16 @@
         if (!response.ok) {
           throw new Error("No se pudo cargar el historial. Inténtalo de nuevo.");
         }
-        const history = await response.json();
-        const metrics = history.metrics || {};
+        const responseData = await response.json();
+        const history = {
+          jiujitsu: Array.isArray(responseData?.jiujitsu) ? responseData.jiujitsu : [],
+          padel: Array.isArray(responseData?.padel) ? responseData.padel : [],
+          trading: Array.isArray(responseData?.trading) ? responseData.trading : [],
+          metrics: responseData?.metrics && typeof responseData.metrics === "object"
+            ? responseData.metrics
+            : {},
+        };
+        const metrics = history.metrics;
         document.getElementById("jiujitsuWinRate").textContent = formatWinRate(
           metrics.jiujitsu_win_rate,
         );
@@ -813,7 +821,7 @@
         const cell = document.createElement("td");
         cell.colSpan = columnCount;
         cell.className = "table-empty";
-        cell.textContent = "Sin actividad registrada";
+        cell.textContent = "No hay registros guardados";
         row.append(cell);
         body.replaceChildren(row);
       }
@@ -943,9 +951,9 @@
           }
           form.elements.session_id.value = session.id;
           form.elements.fecha.value = session.fecha;
-          form.elements.horario.value = session.horario;
+          form.elements.horario.value = session.horario ?? "Tarde";
           form.elements.estado_fisico.value = session.estado_fisico || "";
-          form.elements.comentarios.value = session.comentarios || "";
+          form.elements.comentarios.value = session.comentarios ?? "";
           modalId = "editJiuJitsuModal";
         } else if (activity === "padel") {
           const form = document.getElementById("editPadelForm");
@@ -955,14 +963,14 @@
           }
           form.elements.session_id.value = session.id;
           form.elements.fecha.value = session.fecha;
-          form.elements.horario.value = session.horario;
-          form.elements.lado_juego.value = session.lado_juego || "Derecha";
+          form.elements.horario.value = session.horario ?? "Tarde";
+          form.elements.lado_juego.value = session.lado_juego ?? "Derecha";
           form.elements.tipo.value = session.tipo;
           form.elements["compañero"].value = session.compañero || "";
           form.elements.errores.value = session.errores;
           form.elements.resultado.value = session.resultado || "";
           form.elements.rivals.value = rivalNames.join("\n");
-          form.elements.comentarios.value = session.comentarios || "";
+          form.elements.comentarios.value = session.comentarios ?? "";
           modalId = "editPadelModal";
         } else {
           const form = document.getElementById("editTradingForm");
@@ -971,7 +979,7 @@
           form.elements.activo.value = session.activo || "";
           form.elements.resultado.value = session.resultado;
           form.elements.aprendizaje.value = session.aprendizaje || "";
-          form.elements.comentarios.value = session.comentarios || "";
+          form.elements.comentarios.value = session.comentarios ?? "";
           modalId = "editTradingModal";
         }
         const modalElement = document.getElementById(modalId);
