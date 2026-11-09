@@ -1,7 +1,7 @@
 from collections.abc import Generator
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -17,10 +17,13 @@ from models.schemas import (
     JiuJitsuMatchCreate,
     JiuJitsuSessionCreate,
     JiuJitsuSessionResponse,
+    JiuJitsuSessionUpdate,
     PadelSessionCreate,
     PadelSessionResponse,
+    PadelSessionUpdate,
     TradingSessionCreate,
     TradingSessionResponse,
+    TradingSessionUpdate,
 )
 
 
@@ -63,6 +66,22 @@ def _save_record(db: Session, record: Any) -> Any:
     return record
 
 
+def _update_record(
+    db: Session,
+    record: Any,
+    update_data: BaseModel,
+    excluded_fields: set[str] | None = None,
+) -> Any:
+    updated_fields = update_data.model_dump(exclude_unset=True)
+    for field_name, field_value in updated_fields.items():
+        if excluded_fields is not None and field_name in excluded_fields:
+            continue
+        setattr(record, field_name, field_value)
+    db.commit()
+    db.refresh(record)
+    return record
+
+
 def _serialize_records(
     records: list[Any],
     schema: type[BaseModel],
@@ -86,6 +105,7 @@ def create_jiujitsu_session(
     db_session = JiuJitsuSession(
         fecha=session_data.fecha,
         estado_fisico=session_data.estado_fisico,
+        comentarios=session_data.comentarios,
         matches=_build_jiujitsu_matches(session_data.matches),
     )
     saved_session = _save_record(db, db_session)
@@ -107,6 +127,7 @@ def create_padel_session(
         compañero=session_data.compañero,
         errores=session_data.errores,
         resultado=session_data.resultado,
+        comentarios=session_data.comentarios,
         rivals=_build_padel_rivals(session_data.rivals),
     )
     saved_session = _save_record(db, db_session)
@@ -127,9 +148,78 @@ def create_trading_session(
         activo=session_data.activo,
         aprendizaje=session_data.aprendizaje,
         resultado=session_data.resultado,
+        comentarios=session_data.comentarios,
     )
     saved_session = _save_record(db, db_session)
     return TradingSessionResponse.model_validate(saved_session)
+
+
+@router.put("/jiujitsu/{session_id}", response_model=JiuJitsuSessionResponse)
+def update_jiujitsu_session(
+    session_id: int,
+    session_data: JiuJitsuSessionUpdate,
+    db: Session = Depends(get_db),
+) -> JiuJitsuSessionResponse:
+    db_session = (
+        db.query(JiuJitsuSession)
+        .filter(JiuJitsuSession.id == session_id)
+        .first()
+    )
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    if "matches" in session_data.model_fields_set:
+        db_session.matches = _build_jiujitsu_matches(session_data.matches or [])
+    updated_session = _update_record(
+        db,
+        db_session,
+        session_data,
+        excluded_fields={"matches"},
+    )
+    return JiuJitsuSessionResponse.model_validate(updated_session)
+
+
+@router.put("/padel/{session_id}", response_model=PadelSessionResponse)
+def update_padel_session(
+    session_id: int,
+    session_data: PadelSessionUpdate,
+    db: Session = Depends(get_db),
+) -> PadelSessionResponse:
+    db_session = (
+        db.query(PadelSession)
+        .filter(PadelSession.id == session_id)
+        .first()
+    )
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    if "rivals" in session_data.model_fields_set:
+        db_session.rivals = _build_padel_rivals(session_data.rivals or [])
+    updated_session = _update_record(
+        db,
+        db_session,
+        session_data,
+        excluded_fields={"rivals"},
+    )
+    return PadelSessionResponse.model_validate(updated_session)
+
+
+@router.put("/trading/{session_id}", response_model=TradingSessionResponse)
+def update_trading_session(
+    session_id: int,
+    session_data: TradingSessionUpdate,
+    db: Session = Depends(get_db),
+) -> TradingSessionResponse:
+    db_session = (
+        db.query(TradingSession)
+        .filter(TradingSession.id == session_id)
+        .first()
+    )
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    updated_session = _update_record(db, db_session, session_data)
+    return TradingSessionResponse.model_validate(updated_session)
 
 
 @router.get("/history", response_model=dict[str, list[dict[str, Any]]])

@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from typing import Optional
 
 from sqlalchemy import CheckConstraint, Date, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -13,6 +14,7 @@ class JiuJitsuSession(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     fecha: Mapped[date] = mapped_column(Date, nullable=False)
     estado_fisico: Mapped[str] = mapped_column(String, nullable=False)
+    comentarios: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     matches: Mapped[list["JiuJitsuMatch"]] = relationship(
         back_populates="session",
@@ -49,6 +51,7 @@ class PadelSession(Base):
     compañero: Mapped[str] = mapped_column(String, nullable=False)
     errores: Mapped[int] = mapped_column(Integer, nullable=False)
     resultado: Mapped[str] = mapped_column(String, nullable=False)
+    comentarios: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     rivals: Mapped[list["PadelRival"]] = relationship(
         back_populates="padel_session",
@@ -77,3 +80,4 @@ class TradingSession(Base):
     activo: Mapped[str] = mapped_column(String, nullable=False)
     resultado: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     aprendizaje: Mapped[str] = mapped_column(String, nullable=False)
+    comentarios: Mapped[Optional[str]] = mapped_column(String, nullable=True)

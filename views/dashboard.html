@@ -3,127 +3,1253 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tracker Multidisciplinar</title>
+    <meta name="theme-color" content="#fdfbf7">
+    <title>Tracker | Progreso personal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
       :root {
-        color-scheme: light;
-        font-family: "Segoe UI", sans-serif;
-        color: #202a28;
-        background: #f3f5f0;
+        --paper: #fdfbf7;
+        --white: #ffffff;
+        --ink: #20243a;
+        --muted: #737789;
+        --line: #e5e0d8;
+        --ultramarine: #1e40af;
+        --ultramarine-deep: #173387;
+        --mint: #e8f2ec;
+        --peach: #f7e9dc;
+        --lilac: #efedf8;
+        --bronze-line: #e5e0d8;
+        --radius: 12px;
+        font-family: "DM Sans", sans-serif;
+        color: var(--ink);
+        background: var(--paper);
       }
 
-      * { box-sizing: border-box; }
-      body { margin: 0; }
-      header {
-        padding: 28px max(24px, calc((100vw - 1120px) / 2));
-        color: #f7f8f3;
-        background: #173d36;
+      body {
+        position: relative;
+        isolation: isolate;
+        min-height: 100vh;
+        background-color: #fdfbf7;
+        background-image: none;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: var(--ink);
+        transition: all 0.4s ease;
       }
-      header p { margin: 0 0 6px; color: #c4d6c9; font-size: 13px; }
-      h1 { margin: 0; font-size: 27px; font-weight: 600; }
-      main { max-width: 1120px; margin: 0 auto; padding: 28px 24px 48px; }
-      .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-      .toolbar h2 { margin: 0; font-size: 18px; }
-      button {
-        border: 1px solid #b7c8bc;
-        border-radius: 4px;
-        padding: 8px 12px;
-        color: #173d36;
-        background: #fff;
-        font: inherit;
-        cursor: pointer;
+
+      body::before {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        pointer-events: none;
+        content: "";
+        opacity: 0.18;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        transition: filter 0.4s ease;
       }
-      button:hover { background: #e6eee8; }
-      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-      section { min-width: 0; border-top: 3px solid #4d8170; background: #fff; }
-      section:nth-child(2) { border-color: #bd7448; }
-      section:nth-child(3) { border-color: #637a9a; }
-      h3 { margin: 0; padding: 16px 16px 12px; font-size: 16px; }
-      .entries { display: grid; gap: 1px; background: #e4e9e4; }
-      article, .empty, .error { padding: 13px 16px; background: #fff; }
-      article time { color: #5c6e67; font-size: 12px; }
-      article p { margin: 5px 0 0; font-size: 14px; overflow-wrap: anywhere; }
-      .empty, .error { color: #65756e; font-size: 13px; }
-      .error { color: #a33e32; }
-      @media (max-width: 760px) {
-        .grid { grid-template-columns: 1fr; }
-        .toolbar { align-items: flex-start; gap: 12px; }
+      body.bg-jiujitsu::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' fill='none'%3E%3Crect x='130' y='90' width='1340' height='820' rx='12' stroke='%23c9b99a' stroke-width='2'/%3E%3Cpath d='M350 90v820M570 90v820M790 90v820M1010 90v820M1230 90v820M130 295h1340M130 500h1340M130 705h1340' stroke='%23c9b99a' stroke-width='1.5'/%3E%3Ccircle cx='800' cy='500' r='420' stroke='%23e63946' stroke-width='2'/%3E%3Ccircle cx='800' cy='500' r='390' stroke='%23c9b99a' stroke-width='1.5'/%3E%3Cpath d='M380 500h840M800 80v840' stroke='%23c9b99a' stroke-width='1.5'/%3E%3C/svg%3E");
+      }
+      body.bg-padel::before {
+        opacity: 1;
+        background-image:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.5' stroke-opacity='0.5' fill='%23a3e635' fill-opacity='0.20'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='2' stroke-opacity='0.6' fill='none'/%3E%3C/svg%3E"),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.5' stroke-opacity='0.5' fill='%23a3e635' fill-opacity='0.20'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='2' stroke-opacity='0.6' fill='none'/%3E%3C/svg%3E"),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.0' stroke-opacity='0.4' fill='%23a3e635' fill-opacity='0.15'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.5' fill='none'/%3E%3C/svg%3E");
+        background-position: right -60px top -40px, left -50px bottom -50px, right 10% bottom 30%;
+        background-size: 420px 420px, 350px 350px, 250px 250px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        transition: all 0.4s ease;
+      }
+      body.bg-trading::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' fill='none'%3E%3Cg stroke='%2310b981' stroke-width='7'%3E%3Cg transform='rotate(-12 320 210)'%3E%3Crect x='100' y='100' width='440' height='220' rx='18'/%3E%3Crect x='125' y='125' width='390' height='170' rx='10'/%3E%3Ccircle cx='320' cy='210' r='54'/%3E%3Cpath d='M155 165h70M415 255h70'/%3E%3C/g%3E%3Cg transform='rotate(10 1300 210)'%3E%3Crect x='1080' y='100' width='440' height='220' rx='18'/%3E%3Crect x='1105' y='125' width='390' height='170' rx='10'/%3E%3Ccircle cx='1300' cy='210' r='54'/%3E%3Cpath d='M1135 165h70M1395 255h70'/%3E%3C/g%3E%3Cg transform='rotate(-7 800 790)'%3E%3Crect x='580' y='680' width='440' height='220' rx='18'/%3E%3Crect x='605' y='705' width='390' height='170' rx='10'/%3E%3Ccircle cx='800' cy='790' r='54'/%3E%3Cpath d='M635 745h70M895 835h70'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      body.section-historial::before {
+        filter: grayscale(100%) contrast(90%);
+      }
+
+      .navbar, main, footer { position: relative; z-index: 1; }
+      button, input, select { font: inherit; }
+      .navbar { background: rgba(253, 251, 247, 0.94); border-bottom: 1px solid var(--bronze-line); }
+      .brand-mark {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--white);
+        background: var(--ultramarine);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .brand-name { font-size: 14px; font-weight: 700; letter-spacing: 0; }
+      .brand-note { color: var(--muted); font-size: 11px; }
+      .today-label { color: var(--muted); font-size: 13px; }
+      main { max-width: 1120px; padding: 48px 24px 72px; }
+      .screen { min-height: 60vh; }
+      .screen.collapsing { overflow: hidden; transition: height 420ms cubic-bezier(0.22, 1, 0.36, 1); }
+      .eyebrow {
+        color: var(--ultramarine);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1, .display-serif { font-family: "DM Serif Display", Georgia, serif; font-weight: 400; }
+      .welcome-title { max-width: 680px; margin: 12px 0; color: var(--ultramarine); font-size: 52px; line-height: 1.08; }
+      .welcome-copy { color: var(--muted); font-size: 15px; }
+      .welcome-panel {
+        position: relative;
+        overflow: hidden;
+        min-height: 270px;
+        padding: 38px;
+        border: 1px solid var(--bronze-line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+      .welcome-content { position: relative; z-index: 1; max-width: 650px; }
+      .welcome-ornament {
+        position: absolute;
+        right: 12px;
+        bottom: -64px;
+        width: min(45%, 430px);
+        min-width: 220px;
+        color: var(--ultramarine);
+        opacity: 0.14;
+      }
+      .choice-grid { margin-top: 22px; }
+      .choice-card {
+        display: flex;
+        min-height: 158px;
+        width: 100%;
+        align-items: center;
+        gap: 18px;
+        padding: 24px;
+        border: 1px solid var(--bronze-line);
+        border-radius: var(--radius);
+        color: var(--ink);
+        background: var(--white);
+        text-align: left;
+        transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      }
+      .choice-card:hover, .choice-card:focus-visible {
+        transform: translateY(-2px);
+        border-color: #9babdf;
+        box-shadow: 0 14px 36px rgba(30, 64, 175, 0.08);
+      }
+      .choice-icon {
+        display: grid;
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--ultramarine);
+        background: #edf1fc;
+        font-size: 21px;
+      }
+      .choice-card:nth-child(2) .choice-icon { color: #9a552d; background: var(--peach); }
+      .choice-card strong { display: block; color: var(--ultramarine); font-size: 18px; }
+      .choice-card small { display: block; margin-top: 5px; color: var(--muted); font-size: 13px; }
+      .choice-arrow { margin-left: auto; color: var(--ultramarine); font-size: 20px; }
+      .section-top { margin-bottom: 28px; }
+      .section-title { margin: 5px 0 0; color: var(--ultramarine); font-size: 34px; }
+      .icon-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 9px 13px;
+        color: var(--ink);
+        background: var(--white);
+        font-size: 13px;
+      }
+      .icon-button:hover { border-color: #9babdf; color: var(--ultramarine); }
+      .primary-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border: 1px solid var(--ultramarine);
+        border-radius: 5px;
+        padding: 10px 16px;
+        color: var(--white);
+        background: var(--ultramarine);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .primary-action:hover { border-color: var(--ultramarine-deep); background: var(--ultramarine-deep); }
+      .primary-action:disabled { opacity: 0.65; }
+      .activity-picker { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+      .activity-option {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 10px 14px;
+        color: #4b5064;
+        background: var(--white);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .activity-option.active, .activity-option:hover {
+        border-color: var(--ultramarine);
+        color: var(--ultramarine);
+        background: #f1f4fd;
+      }
+      .form-panel, .history-panel {
+        border: 1px solid var(--bronze-line);
+        border-radius: 12px;
+        background-color: #ffffff !important;
+      }
+      .form-panel { padding: 28px; }
+      .activity-container {
+        padding: 20px;
+        border: 1px solid var(--bronze-line);
+        border-radius: 12px;
+        background-color: transparent;
+        background-image: none;
+      }
+      .activity-form {
+        background-color: #ffffff !important;
+        border-radius: 12px;
+      }
+      #form-jiujitsu-container .card,
+      #form-padel-container .card,
+      #form-trading-container .card {
+        background-color: #ffffff !important;
+        border-radius: 12px;
+        color: #1e293b !important;
+      }
+      .form-control, .form-select {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+      }
+      .form-heading { margin-bottom: 24px; }
+      .form-heading h3 { margin: 0; color: var(--ultramarine); font-size: 19px; font-weight: 700; }
+      .form-heading p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+      .form-label { margin-bottom: 7px; color: #484d5d; font-size: 13px; font-weight: 600; }
+      .form-control, .form-select { min-height: 44px; border-color: #dedfe4; border-radius: 5px; font-size: 14px; }
+      .form-control:focus, .form-select:focus { border-color: #7890dd; box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12); }
+      .modal-content { color: var(--ink); background: #ffffff; }
+      .field-block { margin-bottom: 20px; }
+      .dynamic-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+      .dynamic-heading h4 { margin: 0; color: var(--ultramarine); font-size: 14px; font-weight: 700; }
+      .small-action { border: 0; color: var(--ultramarine); background: transparent; font-size: 13px; font-weight: 600; }
+      .dynamic-row { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 12px; margin-bottom: 12px; }
+      .dynamic-row .form-label { display: block; }
+      .remove-row {
+        width: 40px;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #8a4850;
+        background: var(--white);
+      }
+      .form-feedback { min-height: 22px; margin-top: 12px; font-size: 13px; }
+      .form-feedback.success { color: #23734b; }
+      .form-feedback.error { color: #b43e3e; }
+      .history-panel { overflow: hidden; }
+      .history-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px 0; }
+      .nav-tabs { gap: 4px; padding: 0 24px; border-bottom-color: var(--line); }
+      .nav-tabs .nav-link { border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 13px 14px; color: var(--muted); font-size: 13px; font-weight: 600; }
+      .nav-tabs .nav-link.active { border-bottom-color: var(--ultramarine); color: var(--ultramarine); background: transparent; }
+      .table-responsive { padding: 0 24px 20px; }
+      .table { margin: 0; font-size: 13px; vertical-align: middle; }
+      .table thead th { padding-top: 16px; padding-bottom: 12px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+      .table tbody td { padding-top: 14px; padding-bottom: 14px; border-color: #f0eee9; }
+      .table-empty { padding: 42px 12px !important; color: var(--muted); text-align: center; }
+      .history-feedback { min-height: 24px; padding: 0 24px; color: #b43e3e; font-size: 13px; }
+      .result-pill { display: inline-block; border-radius: 20px; padding: 4px 9px; color: var(--ultramarine-deep); background: #edf1fc; font-weight: 600; white-space: nowrap; }
+      .mobile-scroll-note { display: none; padding: 0 24px 14px; color: var(--muted); font-size: 11px; }
+      footer { padding: 20px 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; text-align: center; }
+      @media (max-width: 767.98px) {
+        main { padding: 30px 16px 48px; }
+        .welcome-title { max-width: 460px; font-size: 39px; }
+        .welcome-panel { min-height: 250px; padding: 26px 22px; }
+        .welcome-ornament { right: -30px; bottom: -42px; width: 58%; min-width: 190px; }
+        .choice-card { min-height: 122px; padding: 18px; }
+        .section-title { font-size: 29px; }
+        .form-panel { padding: 21px 17px; }
+        .history-toolbar { align-items: flex-start; padding: 18px 16px 0; }
+        .nav-tabs { flex-wrap: nowrap; overflow-x: auto; padding: 0 12px; }
+        .nav-tabs .nav-link { white-space: nowrap; }
+        .table-responsive { padding: 0 16px 16px; }
+        .history-feedback { padding: 0 16px; }
+        .mobile-scroll-note { display: block; }
+      }
+      @media (max-width: 480px) {
+        .dynamic-row { grid-template-columns: 1fr auto; }
+        .dynamic-row .row-primary { grid-column: 1 / -1; }
+        .dynamic-row .row-secondary { grid-column: 1; }
+        .dynamic-row .remove-row { grid-column: 2; grid-row: 2; }
+        .today-label { display: none; }
+        .welcome-title { font-size: 35px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
       }
     </style>
   </head>
   <body>
-    <header>
-      <p>PROGRESO PERSONAL</p>
-      <h1>Tracker Multidisciplinar</h1>
-    </header>
-    <main>
-      <div class="toolbar">
-        <h2>Historial de actividad</h2>
-        <button id="refresh" type="button" aria-label="Actualizar historial">Actualizar</button>
+    <nav class="navbar navbar-expand">
+      <div class="container-xl px-3 px-md-4">
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/" aria-label="Tracker, inicio">
+          <span class="brand-mark">T</span>
+          <span>
+            <span class="brand-name d-block">Tracker</span>
+            <span class="brand-note d-block">Progreso personal</span>
+          </span>
+        </a>
+        <span class="today-label" id="todayLabel"></span>
       </div>
-      <div class="grid">
-        <section aria-labelledby="jiujitsu-title">
-          <h3 id="jiujitsu-title">Jiu Jitsu</h3>
-          <div class="entries" id="jiujitsu"></div>
-        </section>
-        <section aria-labelledby="padel-title">
-          <h3 id="padel-title">Pádel</h3>
-          <div class="entries" id="padel"></div>
-        </section>
-        <section aria-labelledby="trading-title">
-          <h3 id="trading-title">Trading</h3>
-          <div class="entries" id="trading"></div>
-        </section>
-      </div>
-    </main>
-    <script>
-      const fields = {
-        jiujitsu: (item) => `${item.estado_fisico} · ${item.matches.length} combate(s)`,
-        padel: (item) => `${item.tipo} · ${item.resultado} · ${item.rivals.length} rival(es)`,
-        trading: (item) => `${item.activo} · P&L ${item.resultado} · ${item.aprendizaje}`,
-      };
+    </nav>
 
-      async function loadHistory() {
-        for (const activity of Object.keys(fields)) {
-          document.getElementById(activity).replaceChildren();
+    <main class="container-xl">
+      <section id="welcomeView" class="screen collapse show" aria-labelledby="welcomeTitle">
+        <div class="welcome-panel">
+          <svg class="welcome-ornament" viewBox="0 0 440 320" fill="none" aria-hidden="true">
+            <path d="M45 286C93 239 122 199 128 147C135 87 178 38 242 30C304 22 357 55 385 105" stroke="currentColor" stroke-width="2" />
+            <path d="M81 299C130 252 158 211 165 159C172 111 207 73 253 67C299 62 337 84 359 121" stroke="currentColor" stroke-width="2" />
+            <path d="M117 310C164 265 193 225 201 174C207 137 231 109 265 104C300 99 326 117 343 145" stroke="currentColor" stroke-width="2" />
+            <circle cx="300" cy="210" r="58" stroke="currentColor" stroke-width="2" />
+            <circle cx="300" cy="210" r="37" stroke="currentColor" stroke-width="2" />
+            <path d="M300 152V268M242 210H358" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="128" cy="147" r="7" fill="currentColor" />
+          </svg>
+          <div class="welcome-content">
+            <span class="eyebrow">Jiu Jitsu · Pádel · Trading</span>
+            <h1 id="welcomeTitle" class="welcome-title">Tu progreso, en movimiento.</h1>
+            <p class="welcome-copy mb-0">Una mirada clara a cada sesión y cada decisión.</p>
+          </div>
+        </div>
+        <div class="row g-3 choice-grid">
+          <div class="col-md-6">
+            <button class="choice-card" type="button" data-screen="addView">
+              <span class="choice-icon"><i class="bi bi-plus-lg" aria-hidden="true"></i></span>
+              <span><strong>Añadir Datos</strong><small>Registrar una nueva actividad</small></span>
+              <i class="bi bi-arrow-up-right choice-arrow" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-md-6">
+            <button class="choice-card" type="button" data-screen="historyView">
+              <span class="choice-icon"><i class="bi bi-journal-text" aria-hidden="true"></i></span>
+              <span><strong>Ver Historial</strong><small>Consultar sesiones registradas</small></span>
+              <i class="bi bi-arrow-up-right choice-arrow" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="addView" class="screen collapse" aria-labelledby="addTitle">
+        <div class="section-top d-flex align-items-start justify-content-between gap-3">
+          <div>
+            <span class="eyebrow">Nueva entrada</span>
+            <h2 id="addTitle" class="section-title display-serif">Añadir Datos</h2>
+          </div>
+          <button class="icon-button" type="button" data-screen="welcomeView"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Inicio</span></button>
+        </div>
+
+        <div class="activity-picker" role="group" aria-label="Elegir actividad">
+          <button class="activity-option" type="button" data-activity="jiujitsu"><i class="bi bi-shield" aria-hidden="true"></i>Jiu Jitsu</button>
+          <button class="activity-option" type="button" data-activity="padel"><i class="bi bi-circle" aria-hidden="true"></i>Pádel</button>
+          <button class="activity-option" type="button" data-activity="trading"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Trading</button>
+        </div>
+
+        <div id="form-jiujitsu-container" class="activity-container d-none">
+        <form id="jiujitsuForm" class="activity-form form-panel card d-none" novalidate>
+          <div class="form-heading">
+            <h3>Sesión de Jiu Jitsu</h3>
+            <p>Fecha, estado físico y combates de la sesión.</p>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="jiuDate">Fecha</label>
+              <input class="form-control" id="jiuDate" name="fecha" type="date" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="jiuCondition">Estado físico</label>
+              <input class="form-control" id="jiuCondition" name="estado_fisico" type="text" maxlength="120" placeholder="Ej. Bien, con energía" required>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="dynamic-heading">
+              <h4>Combates</h4>
+              <button class="small-action" id="addMatch" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Añadir combate</button>
+            </div>
+            <div id="jiuMatches" class="dynamic-list"></div>
+          </div>
+          <div class="field-block">
+            <label class="form-label" for="jiujitsu_comentarios">Comentarios / Notas</label>
+            <textarea id="jiujitsu_comentarios" class="form-control" name="comentarios" rows="2"></textarea>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <button class="primary-action" type="submit"><i class="bi bi-check2" aria-hidden="true"></i>Guardar sesión</button>
+            <div class="form-feedback" aria-live="polite"></div>
+          </div>
+        </form>
+        </div>
+
+        <div id="form-padel-container" class="activity-container d-none">
+        <form id="padelForm" class="activity-form form-panel card d-none" novalidate>
+          <div class="form-heading">
+            <h3>Sesión de Pádel</h3>
+            <p>Partido o entrenamiento, con compañeros y rivales.</p>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="padelDate">Fecha</label>
+              <input class="form-control" id="padelDate" name="fecha" type="date" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="padelType">Tipo</label>
+              <select class="form-select" id="padelType" name="tipo" required>
+                <option value="Partido">Partido</option>
+                <option value="Entrenamiento">Entrenamiento</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="padelPartner">Compañero</label>
+              <input class="form-control" id="padelPartner" name="compañero" type="text" maxlength="120" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="padelErrors">Errores</label>
+              <input class="form-control" id="padelErrors" name="errores" type="number" min="0" step="1" value="0" required>
+            </div>
+            <div class="col-12 field-block">
+              <label class="form-label" for="padelResult">Resultado</label>
+              <input class="form-control" id="padelResult" name="resultado" type="text" maxlength="160" placeholder="Ej. Victoria 6-4, 6-3" required>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="dynamic-heading">
+              <h4>Rivales</h4>
+              <button class="small-action" id="addRival" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Añadir rival</button>
+            </div>
+            <div id="padelRivals" class="dynamic-list"></div>
+          </div>
+          <div class="field-block">
+            <label class="form-label" for="padel_comentarios">Comentarios / Notas</label>
+            <textarea id="padel_comentarios" class="form-control" name="comentarios" rows="2"></textarea>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <button class="primary-action" type="submit"><i class="bi bi-check2" aria-hidden="true"></i>Guardar sesión</button>
+            <div class="form-feedback" aria-live="polite"></div>
+          </div>
+        </form>
+        </div>
+
+        <div id="form-trading-container" class="activity-container d-none">
+        <form id="tradingForm" class="activity-form form-panel card d-none" novalidate>
+          <div class="form-heading">
+            <h3>Sesión de Trading</h3>
+            <p>Resultado con precisión decimal y aprendizaje de la operación.</p>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="tradingDate">Fecha</label>
+              <input class="form-control" id="tradingDate" name="fecha" type="date" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="tradingAsset">Activo</label>
+              <input class="form-control" id="tradingAsset" name="activo" type="text" maxlength="120" placeholder="Ej. ES, EUR/USD" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="tradingResult">Resultado (P&amp;L)</label>
+              <input class="form-control" id="tradingResult" name="resultado" type="number" step="0.01" inputmode="decimal" placeholder="0,00" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="tradingLesson">Aprendizaje</label>
+              <input class="form-control" id="tradingLesson" name="aprendizaje" type="text" maxlength="240" required>
+            </div>
+          </div>
+          <div class="field-block">
+            <label class="form-label" for="trading_comentarios">Comentarios / Notas</label>
+            <textarea id="trading_comentarios" class="form-control" name="comentarios" rows="2"></textarea>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <button class="primary-action" type="submit"><i class="bi bi-check2" aria-hidden="true"></i>Guardar operación</button>
+            <div class="form-feedback" aria-live="polite"></div>
+          </div>
+        </form>
+        </div>
+      </section>
+
+      <section id="historyView" class="screen collapse" aria-labelledby="historyTitle">
+        <div class="section-top d-flex align-items-start justify-content-between gap-3">
+          <div>
+            <span class="eyebrow">Actividad registrada</span>
+            <h2 id="historyTitle" class="section-title display-serif">Ver Historial</h2>
+          </div>
+          <div class="d-flex gap-2">
+            <button id="refreshHistory" class="icon-button" type="button" aria-label="Actualizar historial"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i><span>Actualizar</span></button>
+            <button class="icon-button" type="button" data-screen="welcomeView"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Inicio</span></button>
+          </div>
+        </div>
+        <div class="history-panel">
+          <div class="history-toolbar">
+            <span class="eyebrow">Todas las sesiones</span>
+            <span class="today-label">Fechas en formato DD/MM/AAAA</span>
+          </div>
+          <ul class="nav nav-tabs mt-3" id="historyTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="jiujitsu-tab" data-bs-toggle="tab" data-bs-target="#jiujitsu-pane" type="button" role="tab" aria-controls="jiujitsu-pane" aria-selected="true">Jiu Jitsu</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="padel-tab" data-bs-toggle="tab" data-bs-target="#padel-pane" type="button" role="tab" aria-controls="padel-pane" aria-selected="false">Pádel</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="trading-tab" data-bs-toggle="tab" data-bs-target="#trading-pane" type="button" role="tab" aria-controls="trading-pane" aria-selected="false">Trading</button>
+            </li>
+          </ul>
+          <div id="historyFeedback" class="history-feedback" aria-live="polite"></div>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="jiujitsu-pane" role="tabpanel" aria-labelledby="jiujitsu-tab" tabindex="0">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead><tr><th>Fecha</th><th>Estado físico</th><th>Rivales</th><th>Resultados</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+                  <tbody id="jiujitsuRows"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="padel-pane" role="tabpanel" aria-labelledby="padel-tab" tabindex="0">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead><tr><th>Fecha</th><th>Tipo</th><th>Compañero</th><th>Errores</th><th>Rivales</th><th>Resultado</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+                  <tbody id="padelRows"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="trading-pane" role="tabpanel" aria-labelledby="trading-tab" tabindex="0">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead><tr><th>Fecha</th><th>Activo</th><th>P&amp;L</th><th>Aprendizaje</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+                  <tbody id="tradingRows"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <p class="mobile-scroll-note mb-0">Desliza horizontalmente para ver todas las columnas.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>Tracker Multidisciplinar <span aria-hidden="true">·</span> Progreso personal</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const screenIds = ["welcomeView", "addView", "historyView"];
+      const bodyThemeClasses = [
+        "bg-jiujitsu",
+        "bg-padel",
+        "bg-trading",
+        "section-historial",
+      ];
+      const formByActivity = {
+        jiujitsu: document.getElementById("jiujitsuForm"),
+        padel: document.getElementById("padelForm"),
+        trading: document.getElementById("tradingForm"),
+      };
+      const europeanDateFormatter = new Intl.DateTimeFormat("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+      const pnlFormatter = new Intl.NumberFormat("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      function setBodyTheme(activity, isHistory = false) {
+        document.body.classList.remove(...bodyThemeClasses);
+        if (activity) {
+          document.body.classList.add(`bg-${activity}`);
         }
-        try {
-          const response = await fetch("/api/tracker/history");
-          if (!response.ok) throw new Error("No se pudo cargar el historial.");
-          const history = await response.json();
-          for (const activity of Object.keys(fields)) {
-            const container = document.getElementById(activity);
-            const records = history[activity];
-            if (records.length === 0) {
-              const empty = document.createElement("div");
-              empty.className = "empty";
-              empty.textContent = "Sin actividad registrada";
-              container.append(empty);
-              continue;
-            }
-            for (const item of records) {
-              const entry = document.createElement("article");
-              const date = document.createElement("time");
-              date.dateTime = item.fecha;
-              date.textContent = item.fecha;
-              const summary = document.createElement("p");
-              summary.textContent = fields[activity](item);
-              entry.append(date, summary);
-              container.append(entry);
-            }
-          }
-        } catch (error) {
-          for (const activity of Object.keys(fields)) {
-            const message = document.createElement("div");
-            message.className = "error";
-            message.textContent = error.message;
-            document.getElementById(activity).append(message);
-          }
+        if (isHistory) {
+          document.body.classList.add("section-historial");
         }
       }
 
-      document.getElementById("refresh").addEventListener("click", loadHistory);
-      loadHistory();
+      function showScreen(targetId) {
+        for (const screenId of screenIds) {
+          const element = document.getElementById(screenId);
+          const collapse = bootstrap.Collapse.getOrCreateInstance(element, { toggle: false });
+          if (screenId === targetId) {
+            collapse.show();
+          } else {
+            collapse.hide();
+          }
+        }
+        if (targetId === "addView") {
+          const selectedActivity = document.querySelector("[data-activity].active");
+          setBodyTheme(selectedActivity?.dataset.activity);
+        } else if (targetId === "historyView") {
+          const activeTab = document.querySelector("#historyTabs .nav-link.active");
+          setBodyTheme(activeTab?.id.replace(/-tab$/, ""), true);
+        } else {
+          setBodyTheme(null, null);
+        }
+        if (targetId === "historyView") {
+          fetchHistoryData().then(renderHistory).catch(showHistoryError);
+        }
+      }
+
+      function formatEuropeanDate(isoDate) {
+        if (typeof isoDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+          return "—";
+        }
+        const date = new Date(`${isoDate}T00:00:00Z`);
+        if (Number.isNaN(date.getTime())) {
+          return "—";
+        }
+        return europeanDateFormatter.format(date);
+      }
+
+      async function fetchHistoryData() {
+        const response = await fetch("/api/tracker/history", {
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) {
+          throw new Error("No se pudo cargar el historial. Inténtalo de nuevo.");
+        }
+        return response.json();
+      }
+
+      function sortByDateDescending(records) {
+        return records.slice().sort((first, second) => second.fecha.localeCompare(first.fecha));
+      }
+
+      function appendCell(row, value, className = "") {
+        const cell = document.createElement("td");
+        cell.textContent = value == null ? "—" : String(value);
+        if (className) {
+          cell.className = className;
+        }
+        row.append(cell);
+      }
+
+      function appendEditButton(row, activity, session) {
+        const cell = document.createElement("td");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-sm btn-outline-primary";
+        button.textContent = "📝 Editar";
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          openEditModal(activity, session);
+        });
+        cell.append(button);
+        row.append(cell);
+      }
+
+      function renderEmptyRow(body, columnCount) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = columnCount;
+        cell.className = "table-empty";
+        cell.textContent = "Sin actividad registrada";
+        row.append(cell);
+        body.replaceChildren(row);
+      }
+
+      function renderJiuJitsu(records) {
+        const body = document.getElementById("jiujitsuRows");
+        const headerRow = body.closest("table").querySelector("thead tr");
+        if (headerRow.children.length === 6) {
+          headerRow.children[2].textContent = "Combates de la Sesión";
+          headerRow.deleteCell(3);
+        }
+        body.replaceChildren();
+        if (records.length === 0) {
+          renderEmptyRow(body, 5);
+          return;
+        }
+        for (const session of sortByDateDescending(records)) {
+          const row = document.createElement("tr");
+          const combatList = document.createElement("ul");
+          combatList.className = "list-unstyled mb-0 text-start";
+          for (const match of session.matches || []) {
+            const item = document.createElement("li");
+            const rivalName = document.createElement("strong");
+            rivalName.textContent = match.rival;
+            const resultBadge = document.createElement("span");
+            resultBadge.className = "badge bg-light text-dark border";
+            resultBadge.textContent = match.resultado;
+            item.append(
+              document.createTextNode("• "),
+              rivalName,
+              document.createTextNode(" - "),
+              resultBadge,
+            );
+            combatList.append(item);
+          }
+          appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.estado_fisico);
+          const combatCell = document.createElement("td");
+          combatCell.append(combatList);
+          row.append(combatCell);
+          appendCell(row, session.comentarios);
+          appendEditButton(row, "jiujitsu", session);
+          body.append(row);
+        }
+      }
+
+      function renderPadel(records) {
+        const body = document.getElementById("padelRows");
+        body.replaceChildren();
+        if (records.length === 0) {
+          renderEmptyRow(body, 8);
+          return;
+        }
+        for (const session of sortByDateDescending(records)) {
+          const row = document.createElement("tr");
+          const rivals = [];
+          for (const rival of session.rivals || []) {
+            rivals.push(rival.rival_name);
+          }
+          appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.tipo);
+          appendCell(row, session.compañero);
+          appendCell(row, session.errores);
+          appendCell(row, rivals.join(", "));
+          appendCell(row, session.resultado);
+          appendCell(row, session.comentarios);
+          appendEditButton(row, "padel", session);
+          body.append(row);
+        }
+      }
+
+      function renderTrading(records) {
+        const body = document.getElementById("tradingRows");
+        body.replaceChildren();
+        if (records.length === 0) {
+          renderEmptyRow(body, 6);
+          return;
+        }
+        for (const session of sortByDateDescending(records)) {
+          const row = document.createElement("tr");
+          appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.activo);
+          appendCell(row, pnlFormatter.format(Number(session.resultado)), "fw-semibold");
+          appendCell(row, session.aprendizaje);
+          appendCell(row, session.comentarios);
+          appendEditButton(row, "trading", session);
+          body.append(row);
+        }
+      }
+
+      function renderHistory(history) {
+        document.getElementById("historyFeedback").textContent = "";
+        renderJiuJitsu(history.jiujitsu || []);
+        renderPadel(history.padel || []);
+        renderTrading(history.trading || []);
+      }
+
+      function showHistoryError(error) {
+        document.getElementById("historyFeedback").textContent = error.message;
+      }
+
+      async function refreshHistory() {
+        const button = document.getElementById("refreshHistory");
+        button.disabled = true;
+        try {
+          renderHistory(await fetchHistoryData());
+        } catch (error) {
+          showHistoryError(error);
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function openEditModal(activity, session) {
+        let modalId;
+        if (activity === "jiujitsu") {
+          const form = document.getElementById("editJiuJitsuForm");
+          const matchLines = [];
+          for (const match of session.matches || []) {
+            matchLines.push(`${match.rival} | ${match.resultado}`);
+          }
+          form.elements.session_id.value = session.id;
+          form.elements.fecha.value = session.fecha;
+          form.elements.estado_fisico.value = session.estado_fisico || "";
+          form.elements.matches.value = matchLines.join("\n");
+          form.elements.comentarios.value = session.comentarios || "";
+          modalId = "editJiuJitsuModal";
+        } else if (activity === "padel") {
+          const form = document.getElementById("editPadelForm");
+          const rivalNames = [];
+          for (const rival of session.rivals || []) {
+            rivalNames.push(rival.rival_name);
+          }
+          form.elements.session_id.value = session.id;
+          form.elements.fecha.value = session.fecha;
+          form.elements.tipo.value = session.tipo;
+          form.elements["compañero"].value = session.compañero || "";
+          form.elements.errores.value = session.errores;
+          form.elements.resultado.value = session.resultado || "";
+          form.elements.rivals.value = rivalNames.join("\n");
+          form.elements.comentarios.value = session.comentarios || "";
+          modalId = "editPadelModal";
+        } else {
+          const form = document.getElementById("editTradingForm");
+          form.elements.session_id.value = session.id;
+          form.elements.fecha.value = session.fecha;
+          form.elements.activo.value = session.activo || "";
+          form.elements.resultado.value = session.resultado;
+          form.elements.aprendizaje.value = session.aprendizaje || "";
+          form.elements.comentarios.value = session.comentarios || "";
+          modalId = "editTradingModal";
+        }
+        const modalElement = document.getElementById(modalId);
+        modalElement.querySelector(".form-feedback").textContent = "";
+        const myModal = new bootstrap.Modal(document.getElementById(modalId));
+        myModal.show();
+      }
+
+      function parseJiuJitsuMatches(text) {
+        const matches = [];
+        for (const line of text.split(/\r?\n/)) {
+          const trimmedLine = line.trim();
+          if (!trimmedLine) continue;
+          const separatorIndex = trimmedLine.indexOf("|");
+          if (separatorIndex < 1 || separatorIndex === trimmedLine.length - 1) {
+            throw new Error("Cada combate debe tener el formato rival | resultado.");
+          }
+          matches.push({
+            rival: trimmedLine.slice(0, separatorIndex).trim(),
+            resultado: trimmedLine.slice(separatorIndex + 1).trim(),
+          });
+        }
+        return matches;
+      }
+
+      function parsePadelRivals(text) {
+        const rivals = [];
+        for (const line of text.split(/\r?\n/)) {
+          const rival = line.trim();
+          if (rival) rivals.push(rival);
+        }
+        return rivals;
+      }
+
+      async function putActivity(form, endpoint, payload) {
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        setFormFeedback(form, "Guardando cambios…");
+        try {
+          const sessionId = form.elements.session_id.value;
+          const response = await fetch(`/api/tracker/${endpoint}/${sessionId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            const details = await response.json().catch(() => null);
+            const message = details?.detail;
+            throw new Error(typeof message === "string" ? message : "No se pudo actualizar la sesión.");
+          }
+          bootstrap.Modal.getOrCreateInstance(form.closest(".modal")).hide();
+          try {
+            renderHistory(await fetchHistoryData());
+          } catch (error) {
+            showHistoryError(error);
+          }
+          return true;
+        } catch (error) {
+          setFormFeedback(form, error.message, true);
+          return false;
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function makeRemoveButton(label) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "remove-row";
+        button.setAttribute("aria-label", label);
+        button.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+        button.addEventListener("click", () => button.closest(".dynamic-row").remove());
+        return button;
+      }
+
+      function addJiuMatchRow() {
+        const row = document.createElement("div");
+        row.className = "dynamic-row";
+        row.innerHTML = `
+          <div class="row-primary">
+            <label class="form-label">Rival</label>
+            <input class="form-control" type="text" data-match-rival maxlength="120" required>
+          </div>
+          <div class="row-secondary">
+            <label class="form-label">Resultado</label>
+            <input class="form-control" type="text" data-match-result maxlength="120" required>
+          </div>
+        `;
+        row.append(makeRemoveButton("Eliminar combate"));
+        document.getElementById("jiuMatches").append(row);
+      }
+
+      function addPadelRivalRow() {
+        const row = document.createElement("div");
+        row.className = "dynamic-row";
+        row.innerHTML = `
+          <div class="row-primary">
+            <label class="form-label">Nombre del rival</label>
+            <input class="form-control" type="text" data-padel-rival maxlength="120">
+          </div>
+        `;
+        row.append(makeRemoveButton("Eliminar rival"));
+        document.getElementById("padelRivals").append(row);
+      }
+
+      function selectActivity(activity) {
+        setBodyTheme(activity);
+        for (const [name, form] of Object.entries(formByActivity)) {
+          const container = form.closest(".activity-container");
+          container.classList.toggle("d-none", name !== activity);
+          form.classList.toggle("d-none", name !== activity);
+        }
+        for (const button of document.querySelectorAll("[data-activity]")) {
+          button.classList.toggle("active", button.dataset.activity === activity);
+          button.setAttribute("aria-pressed", String(button.dataset.activity === activity));
+        }
+      }
+
+      function setFormFeedback(form, message, isError = false) {
+        const feedback = form.querySelector(".form-feedback");
+        feedback.textContent = message;
+        feedback.className = `form-feedback ${isError ? "error" : "success"}`;
+      }
+
+      async function postActivity(form, endpoint, payload) {
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        setFormFeedback(form, "Guardando…");
+        try {
+          const response = await fetch(`/api/tracker/${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            const details = await response.json().catch(() => null);
+            const message = details?.detail;
+            throw new Error(typeof message === "string" ? message : "No se pudo guardar la actividad.");
+          }
+          setFormFeedback(form, "Registro guardado.");
+          if (endpoint === "jiujitsu") {
+            document.getElementById("jiuMatches").replaceChildren();
+            addJiuMatchRow();
+          }
+          if (endpoint === "padel") {
+            document.getElementById("padelRivals").replaceChildren();
+            addPadelRivalRow();
+          }
+          form.reset();
+          setTodayDates();
+          return true;
+        } catch (error) {
+          setFormFeedback(form, error.message, true);
+          return false;
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function setTodayDates() {
+        const now = new Date();
+        const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+          .toISOString()
+          .slice(0, 10);
+        for (const input of document.querySelectorAll('input[type="date"]')) {
+          if (!input.value) {
+            input.value = localDate;
+          }
+        }
+        document.getElementById("todayLabel").textContent = new Intl.DateTimeFormat("es-ES", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          timeZone: "UTC",
+        }).format(new Date(`${localDate}T00:00:00Z`));
+      }
+
+      document.querySelectorAll("[data-screen]").forEach((button) => {
+        button.addEventListener("click", () => showScreen(button.dataset.screen));
+      });
+      document.querySelectorAll("[data-activity]").forEach((button) => {
+        button.addEventListener("click", () => selectActivity(button.dataset.activity));
+      });
+      document.getElementById("addMatch").addEventListener("click", addJiuMatchRow);
+      document.getElementById("addRival").addEventListener("click", addPadelRivalRow);
+      document.getElementById("refreshHistory").addEventListener("click", refreshHistory);
+      document.querySelectorAll("#historyTabs [data-bs-toggle='tab']").forEach((tab) => {
+        tab.addEventListener("shown.bs.tab", (event) => {
+          const activity = event.target.id.replace(/-tab$/, "");
+          setBodyTheme(activity, true);
+        });
+      });
+
+      document.getElementById("jiujitsuForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!form.reportValidity()) return;
+        const matches = [];
+        for (const row of document.querySelectorAll("#jiuMatches .dynamic-row")) {
+          matches.push({
+            rival: row.querySelector("[data-match-rival]").value.trim(),
+            resultado: row.querySelector("[data-match-result]").value.trim(),
+          });
+        }
+        const saved = await postActivity(form, "jiujitsu", {
+          fecha: form.elements.fecha.value,
+          estado_fisico: form.elements.estado_fisico.value.trim(),
+          comentarios: form.elements.comentarios.value.trim() || null,
+          matches,
+        });
+        if (saved) refreshHistory();
+      });
+
+      document.getElementById("padelForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!form.reportValidity()) return;
+        const rivals = [];
+        for (const input of document.querySelectorAll("[data-padel-rival]")) {
+          const rival = input.value.trim();
+          if (rival) rivals.push(rival);
+        }
+        const saved = await postActivity(form, "padel", {
+          fecha: form.elements.fecha.value,
+          tipo: form.elements.tipo.value,
+          compañero: form.elements["compañero"].value.trim(),
+          errores: Number(form.elements.errores.value),
+          resultado: form.elements.resultado.value.trim(),
+          comentarios: form.elements.comentarios.value.trim() || null,
+          rivals,
+        });
+        if (saved) refreshHistory();
+      });
+
+      document.getElementById("tradingForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!form.reportValidity()) return;
+        const saved = await postActivity(form, "trading", {
+          fecha: form.elements.fecha.value,
+          activo: form.elements.activo.value.trim(),
+          aprendizaje: form.elements.aprendizaje.value.trim(),
+          resultado: form.elements.resultado.value,
+          comentarios: form.elements.comentarios.value.trim() || null,
+        });
+        if (saved) refreshHistory();
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("editJiuJitsuForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          if (!form.reportValidity()) return;
+          let matches;
+          try {
+            matches = parseJiuJitsuMatches(form.elements.matches.value);
+          } catch (error) {
+            setFormFeedback(form, error.message, true);
+            return;
+          }
+          await putActivity(form, "jiujitsu", {
+            fecha: form.elements.fecha.value,
+            estado_fisico: form.elements.estado_fisico.value.trim(),
+            comentarios: form.elements.comentarios.value.trim() || null,
+            matches,
+          });
+        });
+
+        document.getElementById("editPadelForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          if (!form.reportValidity()) return;
+          await putActivity(form, "padel", {
+            fecha: form.elements.fecha.value,
+            tipo: form.elements.tipo.value,
+            compañero: form.elements["compañero"].value.trim(),
+            errores: Number(form.elements.errores.value),
+            resultado: form.elements.resultado.value.trim(),
+            comentarios: form.elements.comentarios.value.trim() || null,
+            rivals: parsePadelRivals(form.elements.rivals.value),
+          });
+        });
+
+        document.getElementById("editTradingForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          if (!form.reportValidity()) return;
+          await putActivity(form, "trading", {
+            fecha: form.elements.fecha.value,
+            activo: form.elements.activo.value.trim(),
+            aprendizaje: form.elements.aprendizaje.value.trim(),
+            resultado: form.elements.resultado.value,
+            comentarios: form.elements.comentarios.value.trim() || null,
+          });
+        });
+      });
+
+      document.getElementById("jiujitsuRows").replaceChildren();
+      renderEmptyRow(document.getElementById("jiujitsuRows"), 6);
+      renderEmptyRow(document.getElementById("padelRows"), 8);
+      renderEmptyRow(document.getElementById("tradingRows"), 6);
+      setTodayDates();
+      addJiuMatchRow();
+      addPadelRivalRow();
     </script>
+
+    <div class="modal fade" id="editJiuJitsuModal" tabindex="-1" aria-labelledby="editJiuJitsuTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <form id="editJiuJitsuForm" novalidate>
+            <div class="modal-header">
+              <h2 class="modal-title fs-5 display-serif" id="editJiuJitsuTitle">Editar sesión de Jiu Jitsu</h2>
+              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="session_id">
+              <div class="row g-3">
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editJiuJitsuDate">Fecha</label>
+                  <input class="form-control" id="editJiuJitsuDate" name="fecha" type="date" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editJiuJitsuCondition">Estado físico</label>
+                  <input class="form-control" id="editJiuJitsuCondition" name="estado_fisico" type="text" required>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editJiuJitsuMatches">Combates, uno por línea (rival | resultado)</label>
+                  <textarea class="form-control" id="editJiuJitsuMatches" name="matches" rows="4"></textarea>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editJiuJitsuComments">Comentarios / Notas</label>
+                  <textarea class="form-control" id="editJiuJitsuComments" name="comentarios" rows="2"></textarea>
+                </div>
+              </div>
+              <div class="form-feedback" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light border" type="button" data-bs-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editPadelModal" tabindex="-1" aria-labelledby="editPadelTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <form id="editPadelForm" novalidate>
+            <div class="modal-header">
+              <h2 class="modal-title fs-5 display-serif" id="editPadelTitle">Editar sesión de Pádel</h2>
+              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="session_id">
+              <div class="row g-3">
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editPadelDate">Fecha</label>
+                  <input class="form-control" id="editPadelDate" name="fecha" type="date" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editPadelType">Tipo</label>
+                  <select class="form-select" id="editPadelType" name="tipo" required>
+                    <option value="Partido">Partido</option>
+                    <option value="Entrenamiento">Entrenamiento</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editPadelPartner">Compañero</label>
+                  <input class="form-control" id="editPadelPartner" name="compañero" type="text" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editPadelErrors">Errores</label>
+                  <input class="form-control" id="editPadelErrors" name="errores" type="number" min="0" step="1" required>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editPadelResult">Resultado</label>
+                  <input class="form-control" id="editPadelResult" name="resultado" type="text" required>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editPadelRivals">Rivales, uno por línea</label>
+                  <textarea class="form-control" id="editPadelRivals" name="rivals" rows="3"></textarea>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editPadelComments">Comentarios / Notas</label>
+                  <textarea class="form-control" id="editPadelComments" name="comentarios" rows="2"></textarea>
+                </div>
+              </div>
+              <div class="form-feedback" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light border" type="button" data-bs-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editTradingModal" tabindex="-1" aria-labelledby="editTradingTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <form id="editTradingForm" novalidate>
+            <div class="modal-header">
+              <h2 class="modal-title fs-5 display-serif" id="editTradingTitle">Editar sesión de Trading</h2>
+              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="session_id">
+              <div class="row g-3">
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editTradingDate">Fecha</label>
+                  <input class="form-control" id="editTradingDate" name="fecha" type="date" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editTradingAsset">Activo</label>
+                  <input class="form-control" id="editTradingAsset" name="activo" type="text" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editTradingResult">Resultado (P&amp;L)</label>
+                  <input class="form-control" id="editTradingResult" name="resultado" type="number" step="0.01" inputmode="decimal" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editTradingLesson">Aprendizaje</label>
+                  <input class="form-control" id="editTradingLesson" name="aprendizaje" type="text" required>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editTradingComments">Comentarios / Notas</label>
+                  <textarea class="form-control" id="editTradingComments" name="comentarios" rows="2"></textarea>
+                </div>
+              </div>
+              <div class="form-feedback" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light border" type="button" data-bs-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
