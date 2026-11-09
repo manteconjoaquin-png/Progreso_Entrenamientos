@@ -1,0 +1,4 @@
+venv/
+.venv/
+__pycache__/
+progress_tracker.db

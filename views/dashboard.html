@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tracker Multidisciplinar</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", sans-serif;
+        color: #202a28;
+        background: #f3f5f0;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      header {
+        padding: 28px max(24px, calc((100vw - 1120px) / 2));
+        color: #f7f8f3;
+        background: #173d36;
+      }
+      header p { margin: 0 0 6px; color: #c4d6c9; font-size: 13px; }
+      h1 { margin: 0; font-size: 27px; font-weight: 600; }
+      main { max-width: 1120px; margin: 0 auto; padding: 28px 24px 48px; }
+      .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+      .toolbar h2 { margin: 0; font-size: 18px; }
+      button {
+        border: 1px solid #b7c8bc;
+        border-radius: 4px;
+        padding: 8px 12px;
+        color: #173d36;
+        background: #fff;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:hover { background: #e6eee8; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      section { min-width: 0; border-top: 3px solid #4d8170; background: #fff; }
+      section:nth-child(2) { border-color: #bd7448; }
+      section:nth-child(3) { border-color: #637a9a; }
+      h3 { margin: 0; padding: 16px 16px 12px; font-size: 16px; }
+      .entries { display: grid; gap: 1px; background: #e4e9e4; }
+      article, .empty, .error { padding: 13px 16px; background: #fff; }
+      article time { color: #5c6e67; font-size: 12px; }
+      article p { margin: 5px 0 0; font-size: 14px; overflow-wrap: anywhere; }
+      .empty, .error { color: #65756e; font-size: 13px; }
+      .error { color: #a33e32; }
+      @media (max-width: 760px) {
+        .grid { grid-template-columns: 1fr; }
+        .toolbar { align-items: flex-start; gap: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p>PROGRESO PERSONAL</p>
+      <h1>Tracker Multidisciplinar</h1>
+    </header>
+    <main>
+      <div class="toolbar">
+        <h2>Historial de actividad</h2>
+        <button id="refresh" type="button" aria-label="Actualizar historial">Actualizar</button>
+      </div>
+      <div class="grid">
+        <section aria-labelledby="jiujitsu-title">
+          <h3 id="jiujitsu-title">Jiu Jitsu</h3>
+          <div class="entries" id="jiujitsu"></div>
+        </section>
+        <section aria-labelledby="padel-title">
+          <h3 id="padel-title">Pádel</h3>
+          <div class="entries" id="padel"></div>
+        </section>
+        <section aria-labelledby="trading-title">
+          <h3 id="trading-title">Trading</h3>
+          <div class="entries" id="trading"></div>
+        </section>
+      </div>
+    </main>
+    <script>
+      const fields = {
+        jiujitsu: (item) => `${item.estado_fisico} · ${item.matches.length} combate(s)`,
+        padel: (item) => `${item.tipo} · ${item.resultado} · ${item.rivals.length} rival(es)`,
+        trading: (item) => `${item.activo} · P&L ${item.resultado} · ${item.aprendizaje}`,
+      };
+
+      async function loadHistory() {
+        for (const activity of Object.keys(fields)) {
+          document.getElementById(activity).replaceChildren();
+        }
+        try {
+          const response = await fetch("/api/tracker/history");
+          if (!response.ok) throw new Error("No se pudo cargar el historial.");
+          const history = await response.json();
+          for (const activity of Object.keys(fields)) {
+            const container = document.getElementById(activity);
+            const records = history[activity];
+            if (records.length === 0) {
+              const empty = document.createElement("div");
+              empty.className = "empty";
+              empty.textContent = "Sin actividad registrada";
+              container.append(empty);
+              continue;
+            }
+            for (const item of records) {
+              const entry = document.createElement("article");
+              const date = document.createElement("time");
+              date.dateTime = item.fecha;
+              date.textContent = item.fecha;
+              const summary = document.createElement("p");
+              summary.textContent = fields[activity](item);
+              entry.append(date, summary);
+              container.append(entry);
+            }
+          }
+        } catch (error) {
+          for (const activity of Object.keys(fields)) {
+            const message = document.createElement("div");
+            message.className = "error";
+            message.textContent = error.message;
+            document.getElementById(activity).append(message);
+          }
+        }
+      }
+
+      document.getElementById("refresh").addEventListener("click", loadHistory);
+      loadHistory();
+    </script>
+  </body>
+</html>
