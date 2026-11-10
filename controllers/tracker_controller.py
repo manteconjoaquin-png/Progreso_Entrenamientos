@@ -1,6 +1,7 @@
+import datetime
 from collections.abc import Generator
 from decimal import Decimal
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -279,7 +280,11 @@ def delete_trading_session(
 
 
 @router.get("/history", response_model=dict[str, Any])
-def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
+def get_history(
+    year: Optional[int] = None,
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    current_year = datetime.date.today().year
     jiujitsu_records = (
         db.query(JiuJitsuSession)
         .order_by(JiuJitsuSession.fecha.desc())
@@ -301,12 +306,41 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
         .all()
     )
 
+    metrics_year = current_year
+    if year is not None:
+        metrics_year = year
+        filtered_jiujitsu_records: list[JiuJitsuSession] = []
+        for session in jiujitsu_records:
+            if session.fecha.year == year:
+                filtered_jiujitsu_records.append(session)
+        jiujitsu_records = filtered_jiujitsu_records
+
+        filtered_padel_records: list[PadelSession] = []
+        for session in padel_records:
+            if session.fecha.year == year:
+                filtered_padel_records.append(session)
+        padel_records = filtered_padel_records
+
+        filtered_trading_records: list[TradingSession] = []
+        for session in trading_records:
+            if session.fecha.year == year:
+                filtered_trading_records.append(session)
+        trading_records = filtered_trading_records
+
+        filtered_jiujitsu_matches: list[JiuJitsuMatch] = []
+        for match in jiujitsu_matches:
+            if match.session.fecha.year == year:
+                filtered_jiujitsu_matches.append(match)
+        jiujitsu_matches = filtered_jiujitsu_matches
+
     horarios = ("Mañana", "Tarde", "Noche")
     cinturones = ("Blanco", "Azul", "Morado", "Marrón", "Negro")
     lados = ("Derecha", "Revés")
 
     jiujitsu_total = 0
     jiujitsu_victories = 0
+    jiujitsu_year_total = 0
+    jiujitsu_year_victories = 0
     jiujitsu_horarios_totales: dict[str, int] = {}
     jiujitsu_horarios_victorias: dict[str, int] = {}
     for horario in horarios:
@@ -329,6 +363,10 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
         jiujitsu_total += 1
         if match.resultado == "Victoria":
             jiujitsu_victories += 1
+        if match.session.fecha.year == metrics_year:
+            jiujitsu_year_total += 1
+            if match.resultado == "Victoria":
+                jiujitsu_year_victories += 1
 
         horario = match.session.horario
         cinturon = match.rival_cinturon
@@ -350,6 +388,8 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
 
     padel_total = 0
     padel_victories = 0
+    padel_year_total = 0
+    padel_year_victories = 0
     padel_horarios_totales: dict[str, int] = {}
     padel_horarios_victorias: dict[str, int] = {}
     for horario in horarios:
@@ -372,6 +412,10 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
         padel_total += 1
         if session.resultado == "Victoria":
             padel_victories += 1
+        if session.fecha.year == metrics_year:
+            padel_year_total += 1
+            if session.resultado == "Victoria":
+                padel_year_victories += 1
 
         horario = session.horario
         lado = session.lado_juego
@@ -393,12 +437,18 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
 
     trading_total = 0
     trading_wins = 0
-    trading_net_profit = Decimal("0.0")
+    trading_year_total = 0
+    trading_year_wins = 0
+    trading_net_profit = Decimal("0.00")
     for session in trading_records:
         trading_total += 1
         trading_net_profit += session.resultado
         if session.resultado > 0:
             trading_wins += 1
+        if session.fecha.year == metrics_year:
+            trading_year_total += 1
+            if session.resultado > 0:
+                trading_year_wins += 1
 
     jiujitsu_horarios: dict[str, Decimal] = {}
     padel_horarios: dict[str, Decimal] = {}
@@ -481,6 +531,27 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
             Decimal(trading_wins) / Decimal(trading_total) * Decimal("100")
         ).quantize(Decimal("0.01"))
 
+    jiujitsu_year_win_rate = Decimal("0.0")
+    if jiujitsu_year_total > 0:
+        jiujitsu_year_win_rate = (
+            Decimal(jiujitsu_year_victories)
+            / Decimal(jiujitsu_year_total)
+        ) * Decimal("100")
+
+    padel_win_rate_year = Decimal("0.0")
+    if padel_year_total > 0:
+        padel_win_rate_year = (
+            Decimal(padel_year_victories) / Decimal(padel_year_total)
+        ) * Decimal("100")
+
+    trading_win_rate_year = Decimal("0.0")
+    if trading_year_total > 0:
+        trading_win_rate_year = (
+            Decimal(trading_year_wins)
+            / Decimal(trading_year_total)
+            * Decimal("100")
+        ).quantize(Decimal("0.01"))
+
     return {
         "jiujitsu": _serialize_records(jiujitsu_records, JiuJitsuSessionResponse),
         "padel": _serialize_records(padel_records, PadelSessionResponse),
@@ -488,6 +559,8 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
         "metrics": {
             "jiujitsu_win_rate": jiujitsu_win_rate,
             "padel_win_rate": padel_win_rate,
+            "jiujitsu_year_win_rate": jiujitsu_year_win_rate,
+            "padel_win_rate_year": padel_win_rate_year,
             "jiujitsu_horarios": jiujitsu_horarios,
             "padel_horarios": padel_horarios,
             "win_rate_cinturon": win_rate_cinturon,
@@ -495,6 +568,7 @@ def get_history(db: Session = Depends(get_db)) -> dict[str, Any]:
             "win_rate_lado": win_rate_lado,
             "win_rate_lado_horario": win_rate_lado_horario,
             "trading_win_rate": trading_win_rate,
+            "trading_win_rate_year": trading_win_rate_year,
             "trading_net_profit": trading_net_profit,
         },
     }
