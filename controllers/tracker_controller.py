@@ -306,6 +306,15 @@ def get_history(
         .all()
     )
 
+    available_years_set: set[int] = set()
+    for session in jiujitsu_records:
+        available_years_set.add(session.fecha.year)
+    for session in padel_records:
+        available_years_set.add(session.fecha.year)
+    for session in trading_records:
+        available_years_set.add(session.fecha.year)
+    available_years = sorted(available_years_set, reverse=True)
+
     metrics_year = current_year
     if year is not None:
         metrics_year = year
@@ -553,6 +562,7 @@ def get_history(
         ).quantize(Decimal("0.01"))
 
     return {
+        "available_years": available_years,
         "jiujitsu": _serialize_records(jiujitsu_records, JiuJitsuSessionResponse),
         "padel": _serialize_records(padel_records, PadelSessionResponse),
         "trading": _serialize_records(trading_records, TradingSessionResponse),

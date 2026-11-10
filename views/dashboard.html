@@ -592,9 +592,7 @@
               <h2 id="historyTitle" class="section-title display-serif">Ver Historial</h2>
               <label class="visually-hidden" for="filter-year">Filtrar historial por año</label>
               <select id="filter-year" class="form-select w-auto d-inline-block ms-3">
-                <option value="">Historial Global</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
+                <option value="global">Historial Global</option>
               </select>
             </div>
           </div>
@@ -801,8 +799,9 @@
       }
 
       async function fetchHistoryData() {
-        const selectedYear = document.getElementById("filter-year").value;
-        const historyUrl = selectedYear
+        const yearSelector = document.getElementById("filter-year");
+        const selectedYear = yearSelector.value;
+        const historyUrl = selectedYear !== "global"
           ? `${API_URL}/api/tracker/history?year=${encodeURIComponent(selectedYear)}`
           : `${API_URL}/api/tracker/history`;
         const response = await fetch(historyUrl, {
@@ -812,6 +811,33 @@
           throw new Error("No se pudo cargar el historial. Inténtalo de nuevo.");
         }
         const responseData = await response.json();
+        const availableYears = Array.isArray(responseData?.available_years)
+          ? responseData.available_years
+          : [];
+        const globalOption = document.createElement("option");
+        globalOption.value = "global";
+        globalOption.textContent = "Historial Global";
+        yearSelector.replaceChildren(globalOption);
+
+        let selectedYearIsAvailable = selectedYear === "global";
+        for (const year of availableYears) {
+          const yearValue = String(year);
+          const yearOption = document.createElement("option");
+          yearOption.value = yearValue;
+          yearOption.textContent = yearValue;
+          yearSelector.append(yearOption);
+          if (yearValue === selectedYear) {
+            selectedYearIsAvailable = true;
+          }
+        }
+
+        if (selectedYearIsAvailable) {
+          yearSelector.value = selectedYear;
+        } else {
+          yearSelector.value = "global";
+          return fetchHistoryData();
+        }
+
         const history = {
           jiujitsu: Array.isArray(responseData?.jiujitsu) ? responseData.jiujitsu : [],
           padel: Array.isArray(responseData?.padel) ? responseData.padel : [],
@@ -1059,7 +1085,7 @@
         while (true) {
           try {
             renderHistory(await fetchHistoryData());
-            splashScreen.classList.add("is-hidden");
+            splashScreen.style.opacity = "0";
             window.setTimeout(() => {
               splashScreen.style.display = "none";
               splashScreen.setAttribute("aria-hidden", "true");
