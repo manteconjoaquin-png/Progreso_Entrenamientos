@@ -1,0 +1,9 @@
+{
+  "name": "Felipe Tracker de Victorias",
+  "short_name": "Tracker",
+  "start_url": "./dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fdfbf7",
+  "theme_color": "#1e40af"
+}
