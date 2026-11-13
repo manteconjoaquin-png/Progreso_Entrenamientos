@@ -378,11 +378,38 @@ def get_history(
         .order_by(PadelSession.fecha.desc())
         .all()
     )
-    futbol_records = (
-        db.query(FutbolSession)
-        .order_by(FutbolSession.fecha.desc())
-        .all()
-    )
+    futbol_records: list[FutbolSession] = []
+    futbol_serialized: list[dict[str, Any]] = []
+    futbol_years: set[int] = set()
+    futbol_win_rate = Decimal("0.0")
+    try:
+        futbol_records = (
+            db.query(FutbolSession)
+            .order_by(FutbolSession.fecha.desc())
+            .all()
+        )
+        futbol_years = {session.fecha.year for session in futbol_records}
+        if year is not None:
+            futbol_records = [
+                session for session in futbol_records if session.fecha.year == year
+            ]
+        futbol_serialized = _serialize_futbol_records(futbol_records)
+        futbol_total = len(futbol_records)
+        futbol_victories = sum(
+            session.resultado == "Victoria" for session in futbol_records
+        )
+        if futbol_total > 0:
+            futbol_win_rate = (
+                Decimal(futbol_victories) / Decimal(futbol_total)
+            ) * Decimal("100")
+    except Exception as error:
+        print(f"Error al consultar o procesar sesiones de Fútbol: {error}")
+        db.rollback()
+        futbol_records = []
+        futbol_serialized = []
+        futbol_years = set()
+        futbol_win_rate = Decimal("0.0")
+
     trading_records = (
         db.query(TradingSession)
         .order_by(TradingSession.fecha.desc())
@@ -399,8 +426,7 @@ def get_history(
         available_years_set.add(session.fecha.year)
     for session in padel_records:
         available_years_set.add(session.fecha.year)
-    for session in futbol_records:
-        available_years_set.add(session.fecha.year)
+    available_years_set.update(futbol_years)
     for session in trading_records:
         available_years_set.add(session.fecha.year)
     available_years = sorted(available_years_set, reverse=True)
@@ -419,12 +445,6 @@ def get_history(
             if session.fecha.year == year:
                 filtered_padel_records.append(session)
         padel_records = filtered_padel_records
-
-        filtered_futbol_records: list[FutbolSession] = []
-        for session in futbol_records:
-            if session.fecha.year == year:
-                filtered_futbol_records.append(session)
-        futbol_records = filtered_futbol_records
 
         filtered_trading_records: list[TradingSession] = []
         for session in trading_records:
@@ -540,13 +560,6 @@ def get_history(
                 if session.resultado == "Victoria":
                     padel_lado_horario_victorias[cruce] += 1
 
-    futbol_total = 0
-    futbol_victories = 0
-    for session in futbol_records:
-        futbol_total += 1
-        if session.resultado == "Victoria":
-            futbol_victories += 1
-
     trading_total = 0
     trading_wins = 0
     trading_year_total = 0
@@ -637,12 +650,6 @@ def get_history(
             Decimal(padel_victories) / Decimal(padel_total)
         ) * Decimal("100")
 
-    futbol_win_rate = Decimal("0.0")
-    if futbol_total > 0:
-        futbol_win_rate = (
-            Decimal(futbol_victories) / Decimal(futbol_total)
-        ) * Decimal("100")
-
     trading_win_rate = Decimal("0.0")
     if trading_total > 0:
         trading_win_rate = (
@@ -674,7 +681,7 @@ def get_history(
         "available_years": available_years,
         "jiujitsu": _serialize_records(jiujitsu_records, JiuJitsuSessionResponse),
         "padel": _serialize_records(padel_records, PadelSessionResponse),
-        "futbol": _serialize_futbol_records(futbol_records),
+        "futbol": futbol_serialized,
         "trading": _serialize_records(trading_records, TradingSessionResponse),
         "metrics": {
             "jiujitsu_win_rate": jiujitsu_win_rate,

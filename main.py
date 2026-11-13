@@ -48,8 +48,27 @@ def migrate_activity_detail_columns() -> None:
                 )
 
 
+def migrate_futbol_positions_column() -> None:
+    table_name = "futbol_sessions"
+    with engine.begin() as connection:
+        inspector = inspect(connection)
+        if not inspector.has_table(table_name):
+            return
+        column_names = {
+            column["name"] for column in inspector.get_columns(table_name)
+        }
+        if "posiciones" not in column_names:
+            connection.execute(
+                text(
+                    "ALTER TABLE futbol_sessions "
+                    "ADD COLUMN posiciones TEXT NOT NULL DEFAULT '[]'"
+                )
+            )
+
+
 migrate_horario_columns()
 migrate_activity_detail_columns()
+migrate_futbol_positions_column()
 
 app = FastAPI(title="Tracker Multidisciplinar de Progreso")
 app.include_router(router)
