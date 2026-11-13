@@ -22,6 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <style>
       :root {
         --paper: #fdfbf7;
@@ -45,47 +46,154 @@
         position: relative;
         isolation: isolate;
         min-height: 100vh;
-        background-color: #fdfbf7;
-        background-image: none;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-color: var(--paper);
         color: var(--ink);
-        transition: all 0.4s ease;
+        transition: background-color 0.3s ease;
       }
 
-      body::before {
+      #dynamic-bg {
         position: fixed;
         z-index: 0;
         inset: 0;
+        width: 100vw;
+        height: 100vh;
         pointer-events: none;
-        content: "";
-        opacity: 0.18;
-        background-size: contain;
+        background-color: #fdfbf7;
+        background-size: 100% 100%;
         background-position: center;
         background-repeat: no-repeat;
-        background-attachment: fixed;
-        transition: filter 0.4s ease;
+        transition: background-color 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
       }
-      body.bg-jiujitsu::before {
+      #dynamic-bg::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        pointer-events: none;
+      }
+      #dynamic-bg.bg-jiujitsu {
+        opacity: 0.24;
+        background-color: transparent;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' fill='none'%3E%3Crect x='130' y='90' width='1340' height='820' rx='12' stroke='%23c9b99a' stroke-width='2'/%3E%3Cpath d='M350 90v820M570 90v820M790 90v820M1010 90v820M1230 90v820M130 295h1340M130 500h1340M130 705h1340' stroke='%23c9b99a' stroke-width='1.5'/%3E%3Ccircle cx='800' cy='500' r='420' stroke='%23e63946' stroke-width='2'/%3E%3Ccircle cx='800' cy='500' r='390' stroke='%23c9b99a' stroke-width='1.5'/%3E%3Cpath d='M380 500h840M800 80v840' stroke='%23c9b99a' stroke-width='1.5'/%3E%3C/svg%3E");
       }
-      body.bg-padel::before {
+      #dynamic-bg.bg-padel {
         opacity: 1;
-        background-image:
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.5' stroke-opacity='0.5' fill='%23a3e635' fill-opacity='0.20'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='2' stroke-opacity='0.6' fill='none'/%3E%3C/svg%3E"),
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.5' stroke-opacity='0.5' fill='%23a3e635' fill-opacity='0.20'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='2' stroke-opacity='0.6' fill='none'/%3E%3C/svg%3E"),
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='75' stroke='%23a3e635' stroke-width='2.0' stroke-opacity='0.4' fill='%23a3e635' fill-opacity='0.15'/%3E%3Cpath d='M45,100 Q100,45 155,100 M45,100 Q100,155 155,100' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.5' fill='none'/%3E%3C/svg%3E");
-        background-position: right -60px top -40px, left -50px bottom -50px, right 10% bottom 30%;
-        background-size: 420px 420px, 350px 350px, 250px 250px;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        transition: all 0.4s ease;
+        background-color: #fdfbf7;
+        background-image: none;
       }
-      body.bg-trading::before {
+      #dynamic-bg.bg-trading {
+        opacity: 0.24;
+        background-color: transparent;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' fill='none'%3E%3Cg stroke='%2310b981' stroke-width='7'%3E%3Cg transform='rotate(-12 320 210)'%3E%3Crect x='100' y='100' width='440' height='220' rx='18'/%3E%3Crect x='125' y='125' width='390' height='170' rx='10'/%3E%3Ccircle cx='320' cy='210' r='54'/%3E%3Cpath d='M155 165h70M415 255h70'/%3E%3C/g%3E%3Cg transform='rotate(10 1300 210)'%3E%3Crect x='1080' y='100' width='440' height='220' rx='18'/%3E%3Crect x='1105' y='125' width='390' height='170' rx='10'/%3E%3Ccircle cx='1300' cy='210' r='54'/%3E%3Cpath d='M1135 165h70M1395 255h70'/%3E%3C/g%3E%3Cg transform='rotate(-7 800 790)'%3E%3Crect x='580' y='680' width='440' height='220' rx='18'/%3E%3Crect x='605' y='705' width='390' height='170' rx='10'/%3E%3Ccircle cx='800' cy='790' r='54'/%3E%3Cpath d='M635 745h70M895 835h70'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       }
-      body.section-historial::before {
+      #dynamic-bg.bg-futbol {
+        background-color: transparent;
+      }
+      #dynamic-bg.bg-futbol::before {
+        opacity: 0.56;
+        background-color: #ffffff;
+        -webkit-mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+        mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+      }
+      #dynamic-bg.section-historial {
         filter: grayscale(100%) contrast(90%);
+        opacity: 0.11;
+      }
+      #dynamic-bg.section-historial.bg-padel {
+        filter: none;
+        opacity: 1;
+        background-color: #fdfbf7;
+      }
+      #dynamic-bg.section-historial.bg-futbol {
+        filter: none;
+        opacity: 1;
+        background-color: #f8fafc;
+      }
+      #dynamic-bg.section-historial.bg-futbol::before {
+        opacity: 0.22;
+        background-color: #64748b;
+      }
+      #dynamic-bg.section-historial.bg-jiujitsu {
+        opacity: 0.11;
+      }
+      #dynamic-bg.section-historial.bg-trading {
+        opacity: 0.11;
+      }
+      body.section-add.bg-jiujitsu { background-color: #f4eee5; }
+      body.section-add.bg-padel { background-color: #eef4e6; }
+      body.section-add.bg-trading { background-color: #eaf3ed; }
+      body.section-add.bg-futbol { background-color: #e8f5e9; }
+      body.section-historial { background-color: #f8fafc; }
+      #padel-balls-layer {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+      body.bg-padel #padel-balls-layer {
+        visibility: visible;
+        opacity: 0.35;
+      }
+      body.bg-padel.section-historial #padel-balls-layer {
+        opacity: 0.18;
+      }
+      .padel-ball {
+        position: absolute;
+        width: clamp(72px, 11vw, 150px);
+        aspect-ratio: 1;
+        transform-origin: center bottom;
+        animation: padelBounce 2.8s ease-in-out infinite;
+      }
+      .padel-ball:nth-child(1) { top: 8%; left: 7%; animation-delay: 0s; }
+      .padel-ball:nth-child(2) { top: 12%; right: 9%; animation-delay: 0.45s; }
+      .padel-ball:nth-child(3) { bottom: 9%; left: 11%; animation-delay: 0.9s; }
+      .padel-ball:nth-child(4) { right: 8%; bottom: 12%; animation-delay: 1.35s; }
+      .padel-ball-shell {
+        fill: #d9f99d;
+        stroke: #a3e635;
+        stroke-width: 5;
+      }
+      .padel-ball-seam {
+        fill: none;
+        stroke: #84cc16;
+        stroke-width: 5;
+        stroke-linecap: round;
+      }
+      body.bg-padel.section-historial .padel-ball-shell {
+        fill: #e2e8f0;
+        stroke: #64748b;
+      }
+      body.bg-padel.section-historial .padel-ball-seam {
+        stroke: #64748b;
+      }
+      @keyframes padelBounce {
+        0%, 100% { transform: translateY(0) scaleY(1); }
+        35% { transform: translateY(-30px) scaleY(1.02); }
+        70% { transform: translateY(0) scaleY(0.92); }
+      }
+      #futbol-pane.bg-futbol-history {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        background-color: #f8fafc;
+      }
+      #futbol-pane.bg-futbol-history::before {
+        position: absolute;
+        z-index: 0;
+        inset: 0;
+        content: "";
+        pointer-events: none;
+        opacity: 0.12;
+        background-color: #64748b;
+        -webkit-mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+        mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+      }
+      #futbol-pane.bg-futbol-history > * {
+        position: relative;
+        z-index: 1;
       }
 
       .navbar, main, footer { position: relative; z-index: 1; }
@@ -222,7 +330,9 @@
       .form-panel, .history-panel {
         border: 1px solid var(--bronze-line);
         border-radius: 12px;
-        background-color: #ffffff !important;
+        background-color: rgba(253, 251, 247, 0.88) !important;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
       }
       .form-panel { padding: 28px; }
       .activity-container {
@@ -233,59 +343,23 @@
         background-image: none;
       }
       .activity-form {
-        background-color: #ffffff !important;
+        background-color: rgba(253, 251, 247, 0.88) !important;
         border-radius: 12px;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
       }
       :root {
         --futbol-pitch-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='70' y='70' width='1460' height='860' rx='8'/%3E%3Cpath d='M800 70v860'/%3E%3Ccircle cx='800' cy='500' r='130'/%3E%3Cpath d='M70 265h230v470H70M70 375h100v250H70M1530 265h-230v470h230M1530 375h-100v250h100M70 420H20v160h50M1530 420h50v160h-50'/%3E%3C/g%3E%3C/svg%3E");
-      }
-      #form-futbol-container.bg-futbol-add,
-      #futbol-pane.bg-futbol-history {
-        position: relative;
-        isolation: isolate;
-      }
-      #form-futbol-container.bg-futbol-add {
-        overflow: hidden;
-        background-color: #e8f5e9;
-      }
-      #form-futbol-container.bg-futbol-add::before,
-      #futbol-pane.bg-futbol-history::before {
-        position: absolute;
-        z-index: 0;
-        inset: 0;
-        content: "";
-        pointer-events: none;
-        -webkit-mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
-        mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
-      }
-      #form-futbol-container.bg-futbol-add::before {
-        background-color: #ffffff;
-        opacity: 0.48;
-      }
-      #form-futbol-container.bg-futbol-add > #futbolForm {
-        position: relative;
-        z-index: 1;
-        background-color: transparent !important;
-        background-image: none !important;
-      }
-      #futbol-pane.bg-futbol-history {
-        background-color: #f8fafc;
-      }
-      #futbol-pane.bg-futbol-history::before {
-        background-color: #cbd5e1;
-        opacity: 0.3;
-      }
-      #futbol-pane.bg-futbol-history > * {
-        position: relative;
-        z-index: 1;
       }
       #form-jiujitsu-container .card,
       #form-padel-container .card,
       #form-trading-container .card,
       #form-futbol-container .card {
-        background-color: #ffffff !important;
+        background-color: rgba(253, 251, 247, 0.88) !important;
         border-radius: 12px;
         color: #1e293b !important;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
       }
       .form-control, .form-select {
         background-color: #ffffff !important;
@@ -318,11 +392,15 @@
       .form-feedback.success { color: #23734b; }
       .form-feedback.error { color: #b43e3e; }
       .history-panel { overflow: hidden; }
-      .win-rate-card { border: 1px solid var(--bronze-line); border-left: 3px solid var(--ultramarine); border-radius: 8px; background: var(--white); }
+      .win-rate-card { border: 1px solid var(--bronze-line); border-left: 3px solid var(--ultramarine); border-radius: 8px; background: rgba(253, 251, 247, 0.88); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
       .win-rate-card .card-body { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 18px; }
       .win-rate-label { color: var(--muted); font-size: 13px; font-weight: 600; }
       .win-rate-value { color: var(--ultramarine); font-family: "DM Serif Display", Georgia, serif; font-size: 26px; line-height: 1; }
-      .analytics-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, 0.88); }
+      .analytics-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: rgba(253, 251, 247, 0.88); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+      .futbol-charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+      .futbol-chart-panel { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: rgba(253, 251, 247, 0.92); }
+      .futbol-chart-panel h3 { margin: 0 0 12px; color: var(--ink); font-size: 13px; font-weight: 700; }
+      .futbol-chart-canvas { position: relative; height: 250px; }
       .year-performance { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 13px; font-weight: 600; }
       .year-performance strong { color: var(--ultramarine); font-family: "DM Serif Display", Georgia, serif; font-size: 19px; }
       .analytics-section { min-width: 0; }
@@ -346,7 +424,7 @@
       }
       .tab-pane.active { opacity: 1 !important; }
       .table-responsive { padding: 0 24px 20px; }
-      .table { margin: 0; font-size: 13px; vertical-align: middle; }
+      .table { --bs-table-bg: rgba(253, 251, 247, 0.72); margin: 0; font-size: 13px; vertical-align: middle; }
       .table thead th { padding-top: 16px; padding-bottom: 12px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
       .table tbody td { padding-top: 14px; padding-bottom: 14px; border-color: #f0eee9; }
       .table-empty { padding: 42px 12px !important; color: var(--muted); text-align: center; }
@@ -457,6 +535,7 @@
         .section-title { font-size: 29px; }
         .form-panel { padding: 21px 17px; }
         .analytics-panel { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
+        .futbol-chart-canvas { height: 220px; }
         .history-toolbar { align-items: flex-start; padding: 18px 16px 0; }
         .nav-tabs { flex-wrap: nowrap; overflow-x: auto; padding: 0 12px; }
         .nav-tabs .nav-link { white-space: nowrap; }
@@ -481,6 +560,25 @@
     </style>
   </head>
   <body>
+    <div id="dynamic-bg" aria-hidden="true"></div>
+    <div id="padel-balls-layer" aria-hidden="true">
+      <svg class="padel-ball" viewBox="0 0 180 180" aria-hidden="true">
+        <circle class="padel-ball-shell" cx="90" cy="90" r="66"></circle>
+        <path class="padel-ball-seam" d="M39 61 Q90 90 39 119 M141 61 Q90 90 141 119"></path>
+      </svg>
+      <svg class="padel-ball" viewBox="0 0 180 180" aria-hidden="true">
+        <circle class="padel-ball-shell" cx="90" cy="90" r="66"></circle>
+        <path class="padel-ball-seam" d="M39 61 Q90 90 39 119 M141 61 Q90 90 141 119"></path>
+      </svg>
+      <svg class="padel-ball" viewBox="0 0 180 180" aria-hidden="true">
+        <circle class="padel-ball-shell" cx="90" cy="90" r="66"></circle>
+        <path class="padel-ball-seam" d="M39 61 Q90 90 39 119 M141 61 Q90 90 141 119"></path>
+      </svg>
+      <svg class="padel-ball" viewBox="0 0 180 180" aria-hidden="true">
+        <circle class="padel-ball-shell" cx="90" cy="90" r="66"></circle>
+        <path class="padel-ball-seam" d="M39 61 Q90 90 39 119 M141 61 Q90 90 141 119"></path>
+      </svg>
+    </div>
     <div id="splash-screen" role="status" aria-live="polite">
       <div class="splash-content">
         <div class="saiyan-avatar-container">
@@ -724,7 +822,7 @@
         </form>
         </div>
 
-        <div id="form-futbol-container" class="activity-container bg-futbol-add d-none">
+        <div id="form-futbol-container" class="activity-container d-none">
         <form id="futbolForm" class="activity-form form-panel card d-none" novalidate>
           <div class="form-heading">
             <h3>Sesión de Fútbol</h3>
@@ -942,9 +1040,22 @@
             </div>
             <div class="tab-pane fade bg-futbol-history" id="futbol-pane" role="tabpanel" aria-labelledby="futbol-tab" tabindex="0">
               <div class="card mb-3 win-rate-card">
-                <div class="card-body">
-                  <span class="win-rate-label">⚽ Porcentaje de Victorias</span>
-                  <strong class="win-rate-value" id="futbolWinRate">0%</strong>
+                <button class="btn btn-sm btn-outline-secondary m-3 align-self-start" type="button" data-bs-toggle="collapse" data-bs-target="#detallesFutbol" aria-expanded="false" aria-controls="detallesFutbol">📝 Detalles</button>
+              </div>
+              <div class="collapse mb-3" id="detallesFutbol">
+                <div class="futbol-charts-grid">
+                  <section class="futbol-chart-panel" aria-labelledby="futbolErrorsHeading">
+                    <h3 id="futbolErrorsHeading">Evolución general de errores</h3>
+                    <div class="futbol-chart-canvas"><canvas id="futbolErrorsChart" aria-label="Errores cometidos por partido, en orden cronológico"></canvas></div>
+                  </section>
+                  <section class="futbol-chart-panel" aria-labelledby="futbolFormatHeading">
+                    <h3 id="futbolFormatHeading">Errores por formato</h3>
+                    <div class="futbol-chart-canvas"><canvas id="futbolFormatChart" aria-label="Evolución de errores en fútbol 5, 7 y 11"></canvas></div>
+                  </section>
+                  <section class="futbol-chart-panel" aria-labelledby="futbolTypeHeading">
+                    <h3 id="futbolTypeHeading">Errores por tipo de partido</h3>
+                    <div class="futbol-chart-canvas"><canvas id="futbolTypeChart" aria-label="Evolución de errores en amistosos y competición"></canvas></div>
+                  </section>
                 </div>
               </div>
               <div class="table-responsive">
@@ -975,6 +1086,8 @@
         "bg-jiujitsu",
         "bg-padel",
         "bg-trading",
+        "bg-futbol",
+        "section-add",
         "section-historial",
       ];
       const formByActivity = {
@@ -1002,14 +1115,23 @@
       const winRateFormatter = new Intl.NumberFormat("es-ES", {
         maximumFractionDigits: 1,
       });
+      const futbolCharts = {};
+      let currentFutbolRecords = [];
 
       function setBodyTheme(activity, isHistory = false) {
         document.body.classList.remove(...bodyThemeClasses);
+        const dynamicBackground = document.getElementById("dynamic-bg");
+        dynamicBackground.classList.remove(...bodyThemeClasses);
         if (activity) {
           document.body.classList.add(`bg-${activity}`);
+          dynamicBackground.classList.add(`bg-${activity}`);
         }
         if (isHistory) {
           document.body.classList.add("section-historial");
+          dynamicBackground.classList.add("section-historial");
+        } else if (activity) {
+          document.body.classList.add("section-add");
+          dynamicBackground.classList.add("section-add");
         }
       }
 
@@ -1142,9 +1264,6 @@
         );
         document.getElementById("padelWinRate").textContent = formatWinRate(
           metrics.padel_win_rate,
-        );
-        document.getElementById("futbolWinRate").textContent = formatWinRate(
-          metrics.futbol_win_rate ?? 0,
         );
         document.getElementById("tradingWinRate").textContent = formatWinRate(
           metrics.trading_win_rate,
@@ -1385,6 +1504,103 @@
         }
       }
 
+      function destroyFutbolCharts() {
+        for (const chart of Object.values(futbolCharts)) {
+          chart.destroy();
+        }
+        for (const chartId of Object.keys(futbolCharts)) {
+          delete futbolCharts[chartId];
+        }
+      }
+
+      function renderFutbolCharts(records) {
+        currentFutbolRecords = records.slice().sort((first, second) =>
+          (first.fecha || "").localeCompare(second.fecha || ""),
+        );
+        destroyFutbolCharts();
+
+        const detailsPanel = document.getElementById("detallesFutbol");
+        if (!window.Chart || !detailsPanel.classList.contains("show")) {
+          return;
+        }
+
+        const labels = currentFutbolRecords.map((session) =>
+          formatEuropeanDate(session.fecha),
+        );
+        const errors = currentFutbolRecords.map((session) =>
+          Number(session.errores_cometidos ?? 0),
+        );
+        const lineDataset = (label, color, values) => ({
+          label,
+          data: values,
+          borderColor: color,
+          backgroundColor: color,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          tension: 0.28,
+          spanGaps: true,
+          fill: false,
+        });
+        const chartOptions = (showLegend) => ({
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: { display: showLegend, position: "bottom" },
+          },
+          scales: {
+            x: { title: { display: true, text: "Fecha" } },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: "Errores cometidos" },
+              ticks: { precision: 0 },
+            },
+          },
+        });
+        const createLineChart = (canvasId, datasets, showLegend) => {
+          const canvas = document.getElementById(canvasId);
+          if (!canvas) return;
+          futbolCharts[canvasId] = new Chart(canvas, {
+            type: "line",
+            data: { labels, datasets },
+            options: chartOptions(showLegend),
+          });
+        };
+
+        createLineChart(
+          "futbolErrorsChart",
+          [lineDataset("Errores", "#1e40af", errors)],
+          false,
+        );
+
+        const formatColors = { "5": "#16a34a", "7": "#d97706", "11": "#dc2626" };
+        createLineChart(
+          "futbolFormatChart",
+          Object.entries(formatColors).map(([format, color]) => lineDataset(
+            `Fútbol ${format}`,
+            color,
+            currentFutbolRecords.map((session, index) =>
+              String(session.formato) === format ? errors[index] : null,
+            ),
+          )),
+          true,
+        );
+
+        const typeColors = { Amistoso: "#0284c7", Competicion: "#c026d3" };
+        createLineChart(
+          "futbolTypeChart",
+          Object.entries(typeColors).map(([type, color]) => lineDataset(
+            type === "Competicion" ? "Competición" : type,
+            color,
+            currentFutbolRecords.map((session, index) =>
+              session.tipo === type ? errors[index] : null,
+            ),
+          )),
+          true,
+        );
+      }
+
       function renderHistory(history) {
         document.getElementById("historyFeedback").textContent = "";
         const tableRenderers = [
@@ -1399,6 +1615,11 @@
           } catch (error) {
             console.error("No se pudo renderizar una tabla del historial:", error);
           }
+        }
+        try {
+          renderFutbolCharts(Array.isArray(history?.futbol) ? history.futbol : []);
+        } catch (error) {
+          console.error("No se pudieron renderizar los gráficos de Fútbol:", error);
         }
         try {
           applyRolePermissions();
@@ -1811,6 +2032,10 @@
       });
       document.getElementById("refreshHistory").addEventListener("click", refreshHistory);
       document.getElementById("filter-year").addEventListener("change", refreshHistory);
+      document.getElementById("detallesFutbol").addEventListener(
+        "shown.bs.collapse",
+        () => renderFutbolCharts(currentFutbolRecords),
+      );
       document.getElementById("director-role-option").addEventListener("click", (event) => {
         const loginForm = document.getElementById("director-login");
         loginForm.classList.remove("d-none");
