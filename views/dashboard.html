@@ -1726,12 +1726,13 @@
       }
 
       function populateFutbolMinutes(selectId) {
-        const select = document.getElementById(selectId);
+        const selectElement = document.getElementById(selectId);
+        if (!selectElement) return;
         for (let minutes = 5; minutes <= 90; minutes += 5) {
           const option = document.createElement("option");
           option.value = String(minutes);
           option.textContent = `${minutes} min`;
-          select.append(option);
+          selectElement.append(option);
         }
       }
 
@@ -1926,6 +1927,7 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
+        populateFutbolMinutes("editFutbolMinutes");
         document.getElementById("editAddFutbolPosition").addEventListener("click", () => {
           addAnotherFutbolPosition(document.getElementById("editFutbolPositions"));
         });
@@ -2013,7 +2015,6 @@
       renderEmptyRow(document.getElementById("futbolRows"), 12);
       setTodayDates();
       populateFutbolMinutes("futbolMinutes");
-      populateFutbolMinutes("editFutbolMinutes");
       addFutbolPositionRow(document.getElementById("futbolPositions"));
       addJiuMatchRow();
       addPadelRivalRow();
