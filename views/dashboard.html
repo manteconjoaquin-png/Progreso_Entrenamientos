@@ -236,9 +236,53 @@
         background-color: #ffffff !important;
         border-radius: 12px;
       }
+      :root {
+        --futbol-pitch-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='70' y='70' width='1460' height='860' rx='8'/%3E%3Cpath d='M800 70v860'/%3E%3Ccircle cx='800' cy='500' r='130'/%3E%3Cpath d='M70 265h230v470H70M70 375h100v250H70M1530 265h-230v470h230M1530 375h-100v250h100M70 420H20v160h50M1530 420h50v160h-50'/%3E%3C/g%3E%3C/svg%3E");
+      }
+      #form-futbol-container.bg-futbol-add,
+      #futbol-pane.bg-futbol-history {
+        position: relative;
+        isolation: isolate;
+      }
+      #form-futbol-container.bg-futbol-add {
+        overflow: hidden;
+        background-color: #e8f5e9;
+      }
+      #form-futbol-container.bg-futbol-add::before,
+      #futbol-pane.bg-futbol-history::before {
+        position: absolute;
+        z-index: 0;
+        inset: 0;
+        content: "";
+        pointer-events: none;
+        -webkit-mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+        mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
+      }
+      #form-futbol-container.bg-futbol-add::before {
+        background-color: #ffffff;
+        opacity: 0.48;
+      }
+      #form-futbol-container.bg-futbol-add > #futbolForm {
+        position: relative;
+        z-index: 1;
+        background-color: transparent !important;
+        background-image: none !important;
+      }
+      #futbol-pane.bg-futbol-history {
+        background-color: #f8fafc;
+      }
+      #futbol-pane.bg-futbol-history::before {
+        background-color: #cbd5e1;
+        opacity: 0.3;
+      }
+      #futbol-pane.bg-futbol-history > * {
+        position: relative;
+        z-index: 1;
+      }
       #form-jiujitsu-container .card,
       #form-padel-container .card,
-      #form-trading-container .card {
+      #form-trading-container .card,
+      #form-futbol-container .card {
         background-color: #ffffff !important;
         border-radius: 12px;
         color: #1e293b !important;
@@ -260,6 +304,8 @@
       .small-action { border: 0; color: var(--ultramarine); background: transparent; font-size: 13px; font-weight: 600; }
       .dynamic-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; align-items: end; gap: 12px; margin-bottom: 12px; }
       .dynamic-row .form-label { display: block; }
+      .futbol-position-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 12px; margin-bottom: 12px; }
+      .futbol-position-actions { display: flex; justify-content: flex-end; margin-bottom: 16px; }
       .remove-row {
         width: 40px;
         height: 42px;
@@ -420,6 +466,8 @@
       }
       @media (max-width: 480px) {
         .dynamic-row { grid-template-columns: 1fr 1fr auto; }
+        .futbol-position-row { grid-template-columns: 1fr auto; }
+        .futbol-position-row > div:first-child { grid-column: 1 / -1; }
         .dynamic-row .row-primary { grid-column: 1 / -1; }
         .dynamic-row .row-secondary { grid-column: 1; }
         .dynamic-row .row-tertiary { grid-column: 2; }
@@ -491,7 +539,7 @@
             <circle cx="128" cy="147" r="7" fill="currentColor" />
           </svg>
           <div class="welcome-content">
-            <span class="eyebrow">Jiu Jitsu · Pádel · Trading</span>
+            <span class="eyebrow">Jiu Jitsu · Pádel · Trading · Fútbol</span>
             <h1 id="welcomeTitle" class="welcome-title">De nada humanidad.</h1>
             <p class="welcome-copy mb-0">Lo que no se mide no se mejora.</p>
           </div>
@@ -527,6 +575,7 @@
           <button class="activity-option" type="button" data-activity="jiujitsu"><i class="bi bi-shield" aria-hidden="true"></i>Jiu Jitsu</button>
           <button class="activity-option" type="button" data-activity="padel"><i class="bi bi-circle" aria-hidden="true"></i>Pádel</button>
           <button class="activity-option" type="button" data-activity="trading"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Trading</button>
+          <button class="activity-option" type="button" data-activity="futbol">⚽ Fútbol</button>
         </div>
 
         <div id="form-jiujitsu-container" class="activity-container d-none">
@@ -674,6 +723,97 @@
           </div>
         </form>
         </div>
+
+        <div id="form-futbol-container" class="activity-container bg-futbol-add d-none">
+        <form id="futbolForm" class="activity-form form-panel card d-none" novalidate>
+          <div class="form-heading">
+            <h3>Sesión de Fútbol</h3>
+            <p>Partido, minutos jugados y rendimiento.</p>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolDate">Fecha</label>
+              <input class="form-control" id="futbolDate" name="fecha" type="date" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolFormat">Formato</label>
+              <select class="form-select" id="futbolFormat" name="formato" required>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolType">Tipo</label>
+              <select class="form-select" id="futbolType" name="tipo" required>
+                <option value="Amistoso">Amistoso</option>
+                <option value="Competicion">Competicion</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolTeam">Equipo</label>
+              <input class="form-control" id="futbolTeam" name="equipo" type="text" minlength="1" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolMinutes">Tiempo de juego</label>
+              <select class="form-select" id="futbolMinutes" name="tiempo_juego" required>
+                <option value="" selected disabled>Selecciona los minutos</option>
+              </select>
+            </div>
+            <div class="col-12 field-block">
+              <div class="dynamic-heading">
+                <h4>Posición y Minutos</h4>
+              </div>
+              <div id="futbolPositions" class="dynamic-list"></div>
+              <div class="futbol-position-actions">
+                <button class="small-action" id="addFutbolPosition" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Añadir otra posición</button>
+              </div>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolGoals">Goles marcados</label>
+              <select class="form-select" id="futbolGoals" name="goles_marcados" required>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolErrors">Errores cometidos</label>
+              <input class="form-control" id="futbolErrors" name="errores_cometidos" type="number" min="0" step="1" value="0" required>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolResult">Resultado</label>
+              <select class="form-select" id="futbolResult" name="resultado" required>
+                <option value="" selected disabled>Selecciona un resultado</option>
+                <option value="Victoria">Victoria</option>
+                <option value="Derrota">Derrota</option>
+                <option value="Empate">Empate</option>
+              </select>
+            </div>
+            <div class="col-sm-6 field-block">
+              <label class="form-label" for="futbolCondition">Estado físico</label>
+              <select class="form-select" id="futbolCondition" name="estado_fisico" required>
+                <option value="Muy cansado">Muy cansado</option>
+                <option value="Cansado">Cansado</option>
+                <option value="Normal">Normal</option>
+                <option value="Bien">Bien</option>
+                <option value="Genial">Genial</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-block">
+            <label class="form-label" for="futbolComments">Comentarios</label>
+            <textarea id="futbolComments" class="form-control" name="comentarios" rows="2"></textarea>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <button class="primary-action" type="submit"><i class="bi bi-check2" aria-hidden="true"></i>Guardar sesión</button>
+            <div class="form-feedback" aria-live="polite"></div>
+          </div>
+        </form>
+        </div>
       </section>
 
       <section id="historyView" class="screen collapse" aria-labelledby="historyTitle">
@@ -707,6 +847,9 @@
             </li>
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="trading-tab" data-bs-toggle="tab" data-bs-target="#trading-pane" type="button" role="tab" aria-controls="trading-pane" aria-selected="false">Trading</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="futbol-tab" data-bs-toggle="tab" data-bs-target="#futbol-pane" type="button" role="tab" aria-controls="futbol-pane" aria-selected="false">⚽ Fútbol</button>
             </li>
           </ul>
           <div id="historyFeedback" class="history-feedback" aria-live="polite"></div>
@@ -797,6 +940,20 @@
                 </table>
               </div>
             </div>
+            <div class="tab-pane fade bg-futbol-history" id="futbol-pane" role="tabpanel" aria-labelledby="futbol-tab" tabindex="0">
+              <div class="card mb-3 win-rate-card">
+                <div class="card-body">
+                  <span class="win-rate-label">⚽ Porcentaje de Victorias</span>
+                  <strong class="win-rate-value" id="futbolWinRate">0%</strong>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead><tr><th>Fecha</th><th>Formato</th><th>Tipo</th><th>Equipo</th><th>Tiempo de juego</th><th>Posiciones</th><th>Goles</th><th>Errores</th><th>Resultado</th><th>Estado físico</th><th>Comentarios</th><th class="crud-actions-column role-restricted">Acciones</th></tr></thead>
+                  <tbody id="futbolRows"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
           <p class="mobile-scroll-note mb-0">Desliza horizontalmente para ver todas las columnas.</p>
         </div>
@@ -824,6 +981,7 @@
         jiujitsu: document.getElementById("jiujitsuForm"),
         padel: document.getElementById("padelForm"),
         trading: document.getElementById("tradingForm"),
+        futbol: document.getElementById("futbolForm"),
       };
       const europeanDateFormatter = new Intl.DateTimeFormat("es-ES", {
         day: "2-digit",
@@ -973,6 +1131,7 @@
           jiujitsu: Array.isArray(responseData?.jiujitsu) ? responseData.jiujitsu : [],
           padel: Array.isArray(responseData?.padel) ? responseData.padel : [],
           trading: Array.isArray(responseData?.trading) ? responseData.trading : [],
+          futbol: Array.isArray(responseData?.futbol) ? responseData.futbol : [],
           metrics: responseData?.metrics && typeof responseData.metrics === "object"
             ? responseData.metrics
             : {},
@@ -983,6 +1142,9 @@
         );
         document.getElementById("padelWinRate").textContent = formatWinRate(
           metrics.padel_win_rate,
+        );
+        document.getElementById("futbolWinRate").textContent = formatWinRate(
+          metrics.futbol_win_rate,
         );
         document.getElementById("tradingWinRate").textContent = formatWinRate(
           metrics.trading_win_rate,
@@ -1195,11 +1357,40 @@
         }
       }
 
+      function renderFutbol(records) {
+        const body = document.getElementById("futbolRows");
+        body.replaceChildren();
+        if (records.length === 0) {
+          renderEmptyRow(body, 12);
+          return;
+        }
+        for (const session of sortByDateDescending(records)) {
+          const row = document.createElement("tr");
+          appendCell(row, formatEuropeanDate(session.fecha));
+          appendCell(row, session.formato);
+          appendCell(row, session.tipo);
+          appendCell(row, session.equipo);
+          appendCell(row, `${session.tiempo_juego} min`);
+          const positions = (session.posiciones || [])
+            .map((item) => `${item.posicion} (${item.minutos}m)`)
+            .join(", ");
+          appendCell(row, positions);
+          appendCell(row, session.goles_marcados);
+          appendCell(row, session.errores_cometidos);
+          appendCell(row, session.resultado);
+          appendCell(row, session.estado_fisico);
+          appendCell(row, session.comentarios);
+          appendEditButton(row, "futbol", session);
+          body.append(row);
+        }
+      }
+
       function renderHistory(history) {
         document.getElementById("historyFeedback").textContent = "";
         renderJiuJitsu(history.jiujitsu || []);
         renderPadel(history.padel || []);
         renderTrading(history.trading || []);
+        renderFutbol(history.futbol || []);
         applyRolePermissions();
         document.getElementById("historyTabContent").classList.remove("history-pending");
       }
@@ -1282,6 +1473,28 @@
           form.elements.rivals.value = rivalNames.join("\n");
           form.elements.comentarios.value = session.comentarios ?? "";
           modalId = "editPadelModal";
+        } else if (activity === "futbol") {
+          const form = document.getElementById("editFutbolForm");
+          form.elements.session_id.value = session.id;
+          form.elements.fecha.value = session.fecha;
+          form.elements.formato.value = session.formato;
+          form.elements.tipo.value = session.tipo;
+          form.elements.equipo.value = session.equipo || "";
+          form.elements.tiempo_juego.value = session.tiempo_juego;
+          const positionsContainer = document.getElementById("editFutbolPositions");
+          positionsContainer.replaceChildren();
+          for (const position of session.posiciones || []) {
+            addFutbolPositionRow(positionsContainer, position);
+          }
+          if (positionsContainer.children.length === 0) {
+            addFutbolPositionRow(positionsContainer);
+          }
+          form.elements.goles_marcados.value = session.goles_marcados;
+          form.elements.errores_cometidos.value = session.errores_cometidos;
+          form.elements.resultado.value = session.resultado;
+          form.elements.estado_fisico.value = session.estado_fisico;
+          form.elements.comentarios.value = session.comentarios ?? "";
+          modalId = "editFutbolModal";
         } else {
           const form = document.getElementById("editTradingForm");
           form.elements.session_id.value = session.id;
@@ -1347,7 +1560,9 @@
         button.className = "remove-row";
         button.setAttribute("aria-label", label);
         button.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
-        button.addEventListener("click", () => button.closest(".dynamic-row").remove());
+        button.addEventListener("click", () => {
+          button.closest(".dynamic-row, .futbol-position-row").remove();
+        });
         return button;
       }
 
@@ -1450,6 +1665,11 @@
             document.getElementById("padelRivals").replaceChildren();
             addPadelRivalRow();
           }
+          if (endpoint === "futbol") {
+            const positionsContainer = document.getElementById("futbolPositions");
+            positionsContainer.replaceChildren();
+            addFutbolPositionRow(positionsContainer);
+          }
           form.reset();
           setTodayDates();
           await new Promise((resolve) => {
@@ -1486,6 +1706,78 @@
         }).format(new Date(`${localDate}T00:00:00Z`));
       }
 
+      function populateFutbolMinutes(selectId) {
+        const select = document.getElementById(selectId);
+        for (let minutes = 5; minutes <= 90; minutes += 5) {
+          const option = document.createElement("option");
+          option.value = String(minutes);
+          option.textContent = `${minutes} min`;
+          select.append(option);
+        }
+      }
+
+      function addFutbolPositionRow(container, position = null) {
+        const row = document.createElement("div");
+        row.className = "futbol-position-row";
+        row.innerHTML = `
+          <div>
+            <label class="form-label">Posición</label>
+            <select class="form-select" data-futbol-position required>
+              <option value="Portero">Portero</option>
+              <option value="Defensa">Defensa</option>
+              <option value="Mediocentro">Mediocentro</option>
+              <option value="Volante ofensivo">Volante ofensivo</option>
+              <option value="Delantero">Delantero</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Minutos en posición</label>
+            <select class="form-select" data-futbol-position-minutes required>
+              <option value="" selected disabled>Minutos</option>
+              ${Array.from({ length: 18 }, (_, index) => {
+                const minutes = (index + 1) * 5;
+                return `<option value="${minutes}">${minutes} min</option>`;
+              }).join("")}
+            </select>
+          </div>
+        `;
+        row.querySelector("[data-futbol-position]").value = position?.posicion || "Portero";
+        if (position?.minutos != null) {
+          row.querySelector("[data-futbol-position-minutes]").value = String(position.minutos);
+        }
+        if (container.children.length > 0) {
+          row.append(makeRemoveButton("Eliminar posición"));
+        }
+        container.append(row);
+      }
+
+      function collectFutbolPositions(container) {
+        return Array.from(container.querySelectorAll(".futbol-position-row"), (row) => ({
+          posicion: row.querySelector("[data-futbol-position]").value,
+          minutos: Number(row.querySelector("[data-futbol-position-minutes]").value),
+        }));
+      }
+
+      function positionsFitPlayingTime(form, positions) {
+        const totalMinutes = positions.reduce((sum, position) => sum + position.minutos, 0);
+        const playingTime = Number(form.elements.tiempo_juego.value);
+        if (totalMinutes > playingTime) {
+          alert("La suma de los minutos por posición no puede superar el tiempo de juego.");
+          return false;
+        }
+        return true;
+      }
+
+      function addAnotherFutbolPosition(container) {
+        const lastRow = container.lastElementChild;
+        const lastPosition = lastRow?.querySelector("[data-futbol-position]").value;
+        const lastMinutes = lastRow?.querySelector("[data-futbol-position-minutes]").value;
+        addFutbolPositionRow(container, {
+          posicion: lastPosition || "Portero",
+          minutos: lastMinutes ? Number(lastMinutes) : null,
+        });
+      }
+
       document.querySelectorAll("[data-screen]").forEach((button) => {
         button.addEventListener("click", () => showScreen(button.dataset.screen));
       });
@@ -1494,6 +1786,9 @@
       });
       document.getElementById("addMatch").addEventListener("click", () => addJiuMatchRow());
       document.getElementById("addRival").addEventListener("click", addPadelRivalRow);
+      document.getElementById("addFutbolPosition").addEventListener("click", () => {
+        addAnotherFutbolPosition(document.getElementById("futbolPositions"));
+      });
       document.getElementById("refreshHistory").addEventListener("click", refreshHistory);
       document.getElementById("filter-year").addEventListener("change", refreshHistory);
       document.getElementById("director-role-option").addEventListener("click", (event) => {
@@ -1589,7 +1884,32 @@
         if (saved) refreshHistory();
       });
 
+      document.getElementById("futbolForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!form.reportValidity()) return;
+        const positions = collectFutbolPositions(document.getElementById("futbolPositions"));
+        if (!positionsFitPlayingTime(form, positions)) return;
+        const saved = await postActivity(form, "futbol", {
+          fecha: form.elements.fecha.value,
+          formato: form.elements.formato.value,
+          tipo: form.elements.tipo.value,
+          equipo: form.elements.equipo.value.trim(),
+          tiempo_juego: Number(form.elements.tiempo_juego.value),
+          posiciones: positions,
+          goles_marcados: Number(form.elements.goles_marcados.value),
+          errores_cometidos: Number(form.elements.errores_cometidos.value),
+          resultado: form.elements.resultado.value,
+          estado_fisico: form.elements.estado_fisico.value,
+          comentarios: form.elements.comentarios.value.trim() || null,
+        });
+        if (saved) refreshHistory();
+      });
+
       document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("editAddFutbolPosition").addEventListener("click", () => {
+          addAnotherFutbolPosition(document.getElementById("editFutbolPositions"));
+        });
         document.getElementById("editAddJiuMatch").addEventListener("click", () => {
           addJiuMatchRow(document.getElementById("editJiuJitsuMatches"));
         });
@@ -1644,13 +1964,38 @@
             comentarios: form.elements.comentarios.value.trim() || null,
           });
         });
+
+        document.getElementById("editFutbolForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          if (!form.reportValidity()) return;
+          const positions = collectFutbolPositions(document.getElementById("editFutbolPositions"));
+          if (!positionsFitPlayingTime(form, positions)) return;
+          await putActivity(form, "futbol", {
+            fecha: form.elements.fecha.value,
+            formato: form.elements.formato.value,
+            tipo: form.elements.tipo.value,
+            equipo: form.elements.equipo.value.trim(),
+            tiempo_juego: Number(form.elements.tiempo_juego.value),
+            posiciones: positions,
+            goles_marcados: Number(form.elements.goles_marcados.value),
+            errores_cometidos: Number(form.elements.errores_cometidos.value),
+            resultado: form.elements.resultado.value,
+            estado_fisico: form.elements.estado_fisico.value,
+            comentarios: form.elements.comentarios.value.trim() || null,
+          });
+        });
       });
 
       document.getElementById("jiujitsuRows").replaceChildren();
       renderEmptyRow(document.getElementById("jiujitsuRows"), 6);
       renderEmptyRow(document.getElementById("padelRows"), 10);
       renderEmptyRow(document.getElementById("tradingRows"), 6);
+      renderEmptyRow(document.getElementById("futbolRows"), 12);
       setTodayDates();
+      populateFutbolMinutes("futbolMinutes");
+      populateFutbolMinutes("editFutbolMinutes");
+      addFutbolPositionRow(document.getElementById("futbolPositions"));
       addJiuMatchRow();
       addPadelRivalRow();
       initializeDashboard();
@@ -1810,6 +2155,103 @@
                 <div class="col-12 field-block">
                   <label class="form-label" for="editTradingComments">Comentarios / Notas</label>
                   <textarea class="form-control" id="editTradingComments" name="comentarios" rows="2"></textarea>
+                </div>
+              </div>
+              <div class="form-feedback" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light border" type="button" data-bs-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editFutbolModal" tabindex="-1" aria-labelledby="editFutbolTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <form id="editFutbolForm" novalidate>
+            <div class="modal-header">
+              <h2 class="modal-title fs-5 display-serif" id="editFutbolTitle">Editar sesión de Fútbol</h2>
+              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="session_id">
+              <div class="row g-3">
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolDate">Fecha</label>
+                  <input class="form-control" id="editFutbolDate" name="fecha" type="date" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolFormat">Formato</label>
+                  <select class="form-select" id="editFutbolFormat" name="formato" required>
+                    <option value="5">5</option>
+                    <option value="7">7</option>
+                    <option value="11">11</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolType">Tipo</label>
+                  <select class="form-select" id="editFutbolType" name="tipo" required>
+                    <option value="Amistoso">Amistoso</option>
+                    <option value="Competicion">Competicion</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolTeam">Equipo</label>
+                  <input class="form-control" id="editFutbolTeam" name="equipo" type="text" minlength="1" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolMinutes">Tiempo de juego</label>
+                  <select class="form-select" id="editFutbolMinutes" name="tiempo_juego" required>
+                    <option value="" selected disabled>Selecciona los minutos</option>
+                  </select>
+                </div>
+                <div class="col-12 field-block">
+                  <div class="dynamic-heading">
+                    <h4>Posición y Minutos</h4>
+                    <button class="small-action" id="editAddFutbolPosition" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Añadir otra posición</button>
+                  </div>
+                  <div id="editFutbolPositions" class="dynamic-list"></div>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolGoals">Goles marcados</label>
+                  <select class="form-select" id="editFutbolGoals" name="goles_marcados" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolErrors">Errores cometidos</label>
+                  <input class="form-control" id="editFutbolErrors" name="errores_cometidos" type="number" min="0" step="1" required>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolResult">Resultado</label>
+                  <select class="form-select" id="editFutbolResult" name="resultado" required>
+                    <option value="" disabled>Selecciona un resultado</option>
+                    <option value="Victoria">Victoria</option>
+                    <option value="Derrota">Derrota</option>
+                    <option value="Empate">Empate</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 field-block">
+                  <label class="form-label" for="editFutbolCondition">Estado físico</label>
+                  <select class="form-select" id="editFutbolCondition" name="estado_fisico" required>
+                    <option value="Muy cansado">Muy cansado</option>
+                    <option value="Cansado">Cansado</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Bien">Bien</option>
+                    <option value="Genial">Genial</option>
+                  </select>
+                </div>
+                <div class="col-12 field-block">
+                  <label class="form-label" for="editFutbolComments">Comentarios</label>
+                  <textarea class="form-control" id="editFutbolComments" name="comentarios" rows="2"></textarea>
                 </div>
               </div>
               <div class="form-feedback" aria-live="polite"></div>

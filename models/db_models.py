@@ -2,7 +2,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import CheckConstraint, Date, ForeignKey, Integer, Numeric, String
+from sqlalchemy import CheckConstraint, Date, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from config.database import Base
@@ -105,3 +105,20 @@ class TradingSession(Base):
     resultado: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     aprendizaje: Mapped[str] = mapped_column(String, nullable=False)
     comentarios: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+
+class FutbolSession(Base):
+    __tablename__ = "futbol_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    fecha: Mapped[date] = mapped_column(Date, nullable=False)
+    formato: Mapped[str] = mapped_column(String, nullable=False)
+    tipo: Mapped[str] = mapped_column(String, nullable=False)
+    equipo: Mapped[str] = mapped_column(String, nullable=False)
+    tiempo_juego: Mapped[int] = mapped_column(Integer, nullable=False)
+    goles_marcados: Mapped[int] = mapped_column(Integer, nullable=False)
+    errores_cometidos: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    resultado: Mapped[str] = mapped_column(String, nullable=False)
+    estado_fisico: Mapped[str] = mapped_column(String, nullable=False)
+    comentarios: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    posiciones: Mapped[str] = mapped_column(Text, nullable=False, default="{}")

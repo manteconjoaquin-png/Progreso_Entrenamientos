@@ -1,4 +1,5 @@
 import datetime
+import json
 from collections.abc import Generator
 from decimal import Decimal
 from typing import Any, Optional
@@ -13,6 +14,7 @@ from models.db_models import (
     JiuJitsuSession,
     PadelRival,
     PadelSession,
+    FutbolSession,
     TradingSession,
 )
 from models.schemas import (
@@ -20,6 +22,8 @@ from models.schemas import (
     JiuJitsuSessionCreate,
     JiuJitsuSessionResponse,
     JiuJitsuSessionUpdate,
+    FutbolCreate,
+    FutbolResponse,
     PadelSessionCreate,
     PadelSessionResponse,
     PadelSessionUpdate,
@@ -96,6 +100,23 @@ def _serialize_records(
     return serialized_records
 
 
+def _futbol_response(record: FutbolSession) -> FutbolResponse:
+    response_data = {
+        column.name: getattr(record, column.name)
+        for column in FutbolSession.__table__.columns
+    }
+    response_data["posiciones"] = json.loads(record.posiciones)
+    return FutbolResponse.model_validate(response_data)
+
+
+def _serialize_futbol_records(records: list[FutbolSession]) -> list[dict[str, Any]]:
+    serialized_records: list[dict[str, Any]] = []
+    for record in records:
+        response = _futbol_response(record)
+        serialized_records.append(response.model_dump(mode="json"))
+    return serialized_records
+
+
 @router.post(
     "/jiujitsu",
     response_model=JiuJitsuSessionResponse,
@@ -138,6 +159,20 @@ def create_padel_session(
     )
     saved_session = _save_record(db, db_session)
     return PadelSessionResponse.model_validate(saved_session)
+
+
+@router.post("/futbol", response_model=FutbolResponse, status_code=201)
+def create_futbol_session(
+    session_data: FutbolCreate,
+    db: Session = Depends(get_db),
+) -> FutbolResponse:
+    positions_json = json.dumps(
+        [position.model_dump() for position in session_data.posiciones]
+    )
+    session_fields = session_data.model_dump(exclude={"posiciones"})
+    db_session = FutbolSession(**session_fields, posiciones=positions_json)
+    saved_session = _save_record(db, db_session)
+    return _futbol_response(saved_session)
 
 
 @router.post(
@@ -244,6 +279,49 @@ def delete_padel_session(
     db.commit()
 
 
+@router.put("/futbol/{session_id}", response_model=FutbolResponse)
+def update_futbol_session(
+    session_id: int,
+    session_data: FutbolCreate,
+    db: Session = Depends(get_db),
+) -> FutbolResponse:
+    db_session = (
+        db.query(FutbolSession)
+        .filter(FutbolSession.id == session_id)
+        .first()
+    )
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    db_session.posiciones = json.dumps(
+        [position.model_dump() for position in session_data.posiciones]
+    )
+    updated_session = _update_record(
+        db,
+        db_session,
+        session_data,
+        excluded_fields={"posiciones"},
+    )
+    return _futbol_response(updated_session)
+
+
+@router.delete("/futbol/{session_id}", status_code=204)
+def delete_futbol_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+) -> None:
+    session = (
+        db.query(FutbolSession)
+        .filter(FutbolSession.id == session_id)
+        .first()
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail="Registro no encontrado")
+
+    db.delete(session)
+    db.commit()
+
+
 @router.put("/trading/{session_id}", response_model=TradingSessionResponse)
 def update_trading_session(
     session_id: int,
@@ -295,6 +373,11 @@ def get_history(
         .order_by(PadelSession.fecha.desc())
         .all()
     )
+    futbol_records = (
+        db.query(FutbolSession)
+        .order_by(FutbolSession.fecha.desc())
+        .all()
+    )
     trading_records = (
         db.query(TradingSession)
         .order_by(TradingSession.fecha.desc())
@@ -310,6 +393,8 @@ def get_history(
     for session in jiujitsu_records:
         available_years_set.add(session.fecha.year)
     for session in padel_records:
+        available_years_set.add(session.fecha.year)
+    for session in futbol_records:
         available_years_set.add(session.fecha.year)
     for session in trading_records:
         available_years_set.add(session.fecha.year)
@@ -329,6 +414,12 @@ def get_history(
             if session.fecha.year == year:
                 filtered_padel_records.append(session)
         padel_records = filtered_padel_records
+
+        filtered_futbol_records: list[FutbolSession] = []
+        for session in futbol_records:
+            if session.fecha.year == year:
+                filtered_futbol_records.append(session)
+        futbol_records = filtered_futbol_records
 
         filtered_trading_records: list[TradingSession] = []
         for session in trading_records:
@@ -444,6 +535,13 @@ def get_history(
                 if session.resultado == "Victoria":
                     padel_lado_horario_victorias[cruce] += 1
 
+    futbol_total = 0
+    futbol_victories = 0
+    for session in futbol_records:
+        futbol_total += 1
+        if session.resultado == "Victoria":
+            futbol_victories += 1
+
     trading_total = 0
     trading_wins = 0
     trading_year_total = 0
@@ -534,6 +632,12 @@ def get_history(
             Decimal(padel_victories) / Decimal(padel_total)
         ) * Decimal("100")
 
+    futbol_win_rate = Decimal("0.0")
+    if futbol_total > 0:
+        futbol_win_rate = (
+            Decimal(futbol_victories) / Decimal(futbol_total)
+        ) * Decimal("100")
+
     trading_win_rate = Decimal("0.0")
     if trading_total > 0:
         trading_win_rate = (
@@ -565,10 +669,12 @@ def get_history(
         "available_years": available_years,
         "jiujitsu": _serialize_records(jiujitsu_records, JiuJitsuSessionResponse),
         "padel": _serialize_records(padel_records, PadelSessionResponse),
+        "futbol": _serialize_futbol_records(futbol_records),
         "trading": _serialize_records(trading_records, TradingSessionResponse),
         "metrics": {
             "jiujitsu_win_rate": jiujitsu_win_rate,
             "padel_win_rate": padel_win_rate,
+            "futbol_win_rate": futbol_win_rate,
             "jiujitsu_year_win_rate": jiujitsu_year_win_rate,
             "padel_win_rate_year": padel_win_rate_year,
             "jiujitsu_horarios": jiujitsu_horarios,

@@ -1,8 +1,8 @@
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 def _validate_horario(value: object) -> str:
@@ -220,3 +220,43 @@ class TradingSessionUpdate(BaseModel):
             return Decimal(str(value))
         except InvalidOperation as error:
             raise ValueError("resultado debe ser un valor decimal válido") from error
+
+
+class PosicionMinutos(BaseModel):
+    posicion: Literal[
+        "Portero",
+        "Defensa",
+        "Mediocentro",
+        "Volante ofensivo",
+        "Delantero",
+    ]
+    minutos: int = Field(ge=1, le=90)
+
+
+class FutbolCreate(BaseModel):
+    fecha: date
+    formato: Literal["5", "7", "11"]
+    tipo: Literal["Amistoso", "Competicion"]
+    equipo: str = Field(min_length=1)
+    tiempo_juego: int = Field(ge=5, le=90)
+    goles_marcados: int = Field(ge=0, le=5)
+    errores_cometidos: int = Field(ge=0)
+    resultado: Literal["Victoria", "Derrota", "Empate"]
+    estado_fisico: Literal["Muy cansado", "Cansado", "Normal", "Bien", "Genial"]
+    comentarios: Optional[str] = None
+    posiciones: List[PosicionMinutos] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_posiciones_minutes(self) -> "FutbolCreate":
+        total_minutes = sum(position.minutos for position in self.posiciones)
+        if total_minutes > self.tiempo_juego:
+            raise ValueError(
+                "La suma de los minutos por posición no puede superar el tiempo de juego"
+            )
+        return self
+
+
+class FutbolResponse(FutbolCreate):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
