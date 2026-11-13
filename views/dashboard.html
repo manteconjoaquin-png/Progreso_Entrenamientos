@@ -1425,31 +1425,32 @@
 
       async function initializeDashboard() {
         const splashScreen = document.getElementById("splash-screen");
-        while (true) {
-          try {
-            const history = await fetchHistoryData();
-            try {
-              renderHistory(history);
-            } catch (error) {
-              console.error("No se pudo renderizar el historial:", error);
-            } finally {
-              splashScreen.style.opacity = "0";
-              window.setTimeout(() => {
-                splashScreen.style.display = "none";
-                splashScreen.setAttribute("aria-hidden", "true");
-                if (getUserRole()) {
-                  applyRolePermissions();
-                } else {
-                  localStorage.removeItem("user_role");
-                  applyRolePermissions();
-                  showRoleSelection();
-                }
-              }, 500);
+        try {
+          const history = await fetchHistoryData();
+          renderHistory(history);
+        } catch (error) {
+          console.error("No se pudo cargar el historial inicial:", error);
+          showHistoryError(error);
+          renderHistory({
+            jiujitsu: [],
+            padel: [],
+            trading: [],
+            futbol: [],
+            metrics: {},
+          });
+        } finally {
+          splashScreen.style.opacity = "0";
+          window.setTimeout(() => {
+            splashScreen.style.display = "none";
+            splashScreen.setAttribute("aria-hidden", "true");
+            if (getUserRole()) {
+              applyRolePermissions();
+            } else {
+              localStorage.removeItem("user_role");
+              applyRolePermissions();
+              showRoleSelection();
             }
-            return;
-          } catch (error) {
-            await new Promise((resolve) => window.setTimeout(resolve, 2000));
-          }
+          }, 500);
         }
       }
 
