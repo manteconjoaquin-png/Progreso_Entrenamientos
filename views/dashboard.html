@@ -1144,7 +1144,7 @@
           metrics.padel_win_rate,
         );
         document.getElementById("futbolWinRate").textContent = formatWinRate(
-          metrics.futbol_win_rate,
+          metrics.futbol_win_rate ?? 0,
         );
         document.getElementById("tradingWinRate").textContent = formatWinRate(
           metrics.trading_win_rate,
@@ -1387,12 +1387,24 @@
 
       function renderHistory(history) {
         document.getElementById("historyFeedback").textContent = "";
-        renderJiuJitsu(history.jiujitsu || []);
-        renderPadel(history.padel || []);
-        renderTrading(history.trading || []);
-        renderFutbol(history.futbol || []);
-        applyRolePermissions();
-        document.getElementById("historyTabContent").classList.remove("history-pending");
+        const tableRenderers = [
+          () => renderJiuJitsu(Array.isArray(history?.jiujitsu) ? history.jiujitsu : []),
+          () => renderPadel(Array.isArray(history?.padel) ? history.padel : []),
+          () => renderTrading(Array.isArray(history?.trading) ? history.trading : []),
+          () => renderFutbol(Array.isArray(history?.futbol) ? history.futbol : []),
+        ];
+        for (const renderTable of tableRenderers) {
+          try {
+            renderTable();
+          } catch (error) {
+            console.error("No se pudo renderizar una tabla del historial:", error);
+          }
+        }
+        try {
+          applyRolePermissions();
+        } finally {
+          document.getElementById("historyTabContent").classList.remove("history-pending");
+        }
       }
 
       function showHistoryError(error) {
@@ -1415,19 +1427,25 @@
         const splashScreen = document.getElementById("splash-screen");
         while (true) {
           try {
-            renderHistory(await fetchHistoryData());
-            splashScreen.style.opacity = "0";
-            window.setTimeout(() => {
-              splashScreen.style.display = "none";
-              splashScreen.setAttribute("aria-hidden", "true");
-              if (getUserRole()) {
-                applyRolePermissions();
-              } else {
-                localStorage.removeItem("user_role");
-                applyRolePermissions();
-                showRoleSelection();
-              }
-            }, 500);
+            const history = await fetchHistoryData();
+            try {
+              renderHistory(history);
+            } catch (error) {
+              console.error("No se pudo renderizar el historial:", error);
+            } finally {
+              splashScreen.style.opacity = "0";
+              window.setTimeout(() => {
+                splashScreen.style.display = "none";
+                splashScreen.setAttribute("aria-hidden", "true");
+                if (getUserRole()) {
+                  applyRolePermissions();
+                } else {
+                  localStorage.removeItem("user_role");
+                  applyRolePermissions();
+                  showRoleSelection();
+                }
+              }, 500);
+            }
             return;
           } catch (error) {
             await new Promise((resolve) => window.setTimeout(resolve, 2000));

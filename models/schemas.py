@@ -258,5 +258,6 @@ class FutbolCreate(BaseModel):
 
 class FutbolResponse(FutbolCreate):
     id: int
+    posiciones: List[PosicionMinutos] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)

@@ -105,7 +105,12 @@ def _futbol_response(record: FutbolSession) -> FutbolResponse:
         column.name: getattr(record, column.name)
         for column in FutbolSession.__table__.columns
     }
-    response_data["posiciones"] = json.loads(record.posiciones)
+    raw_positions = record.posiciones
+    try:
+        positions = json.loads(raw_positions) if raw_positions else []
+    except (json.JSONDecodeError, TypeError):
+        positions = []
+    response_data["posiciones"] = positions if isinstance(positions, list) else []
     return FutbolResponse.model_validate(response_data)
 
 
