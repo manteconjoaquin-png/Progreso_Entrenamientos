@@ -1,4 +1,4 @@
-const CACHE_NAME = "felipe-tracker-saiyan-v9";
+const CACHE_NAME = "felipe-tracker-saiyan-v10";
 const APP_SHELL = [
   "/views/dashboard.html",
   "/views/manifest.json",
