@@ -80,17 +80,16 @@
         background-color: #fdfbf7;
         background-image: none;
       }
-                .catch((error) => console.error("No se pudo registrar el service worker:", error));
-      }
       #dynamic-bg.bg-futbol {
-        background-color: transparent;
+        background-color: #e8f5e9;
       }
       #dynamic-bg.bg-futbol::before {
-        opacity: 0.56;
+        opacity: 1;
         background-color: #ffffff;
         -webkit-mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
         mask: var(--futbol-pitch-mask) center / 100% 100% no-repeat;
       }
+      #dynamic-bg.bg-trading { background-color: #eaf3ed; }
       #dynamic-bg.section-historial {
         filter: grayscale(100%) contrast(90%);
         opacity: 0.11;
@@ -136,6 +135,48 @@
       }
       body.bg-padel.section-historial #padel-balls-layer {
         opacity: 0.18;
+      }
+      #trading-bills-layer {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+      body.bg-trading #trading-bills-layer {
+        visibility: visible;
+        opacity: 0.25;
+      }
+      body.bg-trading.section-historial #trading-bills-layer {
+        opacity: 0.14;
+        filter: grayscale(100%);
+      }
+      .dollar-bill {
+        position: absolute;
+        width: clamp(120px, 19vw, 240px);
+        aspect-ratio: 2;
+        color: #24854b;
+      }
+      .dollar-bill:nth-child(1) { top: 12%; left: 10%; transform: rotate(-12deg); }
+      .dollar-bill:nth-child(2) { top: 18%; right: 9%; transform: rotate(10deg); }
+      .dollar-bill:nth-child(3) { bottom: 13%; left: 17%; transform: rotate(8deg); }
+      .dollar-bill:nth-child(4) { right: 13%; bottom: 15%; transform: rotate(-9deg); }
+      .dollar-bill-frame,
+      .dollar-bill-detail {
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .dollar-bill-frame { stroke-width: 3; }
+      .dollar-bill-detail { stroke-width: 1.5; }
+      .dollar-bill-text {
+        fill: currentColor;
+        font-family: Georgia, serif;
+        font-weight: 700;
       }
       .padel-ball {
         position: absolute;
@@ -576,6 +617,56 @@
         <path class="padel-ball-seam" d="M39 61 Q90 90 39 119 M141 61 Q90 90 141 119"></path>
       </svg>
     </div>
+    <div id="trading-bills-layer" aria-hidden="true">
+      <svg class="dollar-bill" viewBox="0 0 240 120" aria-hidden="true">
+        <rect class="dollar-bill-frame" x="5" y="5" width="230" height="110" rx="9"></rect>
+        <rect class="dollar-bill-detail" x="14" y="14" width="212" height="92" rx="5"></rect>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="20"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="20"></circle>
+        <text class="dollar-bill-text" x="57" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="183" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="120" y="53" text-anchor="middle" font-size="12">ONE DOLLAR</text>
+        <path class="dollar-bill-detail" d="M91 64h58M101 74h38"></path>
+      </svg>
+      <svg class="dollar-bill" viewBox="0 0 240 120" aria-hidden="true">
+        <rect class="dollar-bill-frame" x="5" y="5" width="230" height="110" rx="9"></rect>
+        <rect class="dollar-bill-detail" x="14" y="14" width="212" height="92" rx="5"></rect>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="20"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="20"></circle>
+        <text class="dollar-bill-text" x="57" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="183" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="120" y="53" text-anchor="middle" font-size="12">ONE DOLLAR</text>
+        <path class="dollar-bill-detail" d="M91 64h58M101 74h38"></path>
+      </svg>
+      <svg class="dollar-bill" viewBox="0 0 240 120" aria-hidden="true">
+        <rect class="dollar-bill-frame" x="5" y="5" width="230" height="110" rx="9"></rect>
+        <rect class="dollar-bill-detail" x="14" y="14" width="212" height="92" rx="5"></rect>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="20"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="20"></circle>
+        <text class="dollar-bill-text" x="57" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="183" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="120" y="53" text-anchor="middle" font-size="12">ONE DOLLAR</text>
+        <path class="dollar-bill-detail" d="M91 64h58M101 74h38"></path>
+      </svg>
+      <svg class="dollar-bill" viewBox="0 0 240 120" aria-hidden="true">
+        <rect class="dollar-bill-frame" x="5" y="5" width="230" height="110" rx="9"></rect>
+        <rect class="dollar-bill-detail" x="14" y="14" width="212" height="92" rx="5"></rect>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="57" cy="60" r="20"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="28"></circle>
+        <circle class="dollar-bill-detail" cx="183" cy="60" r="20"></circle>
+        <text class="dollar-bill-text" x="57" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="183" y="70" text-anchor="middle" font-size="31">$</text>
+        <text class="dollar-bill-text" x="120" y="53" text-anchor="middle" font-size="12">ONE DOLLAR</text>
+        <path class="dollar-bill-detail" d="M91 64h58M101 74h38"></path>
+      </svg>
+    </div>
     <div id="splash-screen" role="status" aria-live="polite">
       <div class="splash-content">
         <div class="saiyan-avatar-container">
@@ -842,7 +933,7 @@
               <label class="form-label" for="futbolFormat">Formato</label>
               <select class="form-select" id="futbolFormat" name="formato" required>
                 <option value="5">5</option>
-                <option value="7">7</option>
+                <option value="7" selected>7</option>
                 <option value="11">11</option>
               </select>
             </div>
@@ -890,8 +981,8 @@
             <div class="col-sm-6 field-block">
               <label class="form-label" for="futbolResult">Resultado</label>
               <select class="form-select" id="futbolResult" name="resultado" required>
-                <option value="" selected disabled>Selecciona un resultado</option>
-                <option value="Victoria">Victoria</option>
+                <option value="" disabled>Selecciona un resultado</option>
+                <option value="Victoria" selected>Victoria</option>
                 <option value="Derrota">Derrota</option>
                 <option value="Empate">Empate</option>
               </select>
@@ -1978,7 +2069,7 @@
             <select class="form-select" data-futbol-position required>
               <option value="Portero">Portero</option>
               <option value="Defensa">Defensa</option>
-              <option value="Mediocentro">Mediocentro</option>
+              <option value="Mediocentro" selected>Mediocentro</option>
               <option value="Volante ofensivo">Volante ofensivo</option>
               <option value="Delantero">Delantero</option>
             </select>
@@ -1994,7 +2085,7 @@
             </select>
           </div>
         `;
-        row.querySelector("[data-futbol-position]").value = position?.posicion || "Portero";
+        row.querySelector("[data-futbol-position]").value = position?.posicion || "Mediocentro";
         if (position?.minutos != null) {
           row.querySelector("[data-futbol-position-minutes]").value = String(position.minutos);
         }
@@ -2026,7 +2117,7 @@
         const lastPosition = lastRow?.querySelector("[data-futbol-position]").value;
         const lastMinutes = lastRow?.querySelector("[data-futbol-position-minutes]").value;
         addFutbolPositionRow(container, {
-          posicion: lastPosition || "Portero",
+          posicion: lastPosition || "Mediocentro",
           minutos: lastMinutes ? Number(lastMinutes) : null,
         });
       }
