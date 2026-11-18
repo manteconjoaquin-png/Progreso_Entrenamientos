@@ -224,9 +224,9 @@ class TradingSessionUpdate(BaseModel):
 
 class PosicionMinutos(BaseModel):
     posicion: Literal[
-        "Portero",
-        "Defensa",
         "Mediocentro",
+        "Defensa",
+        "Portero",
         "Volante ofensivo",
         "Delantero",
     ]
@@ -235,7 +235,7 @@ class PosicionMinutos(BaseModel):
 
 class FutbolCreate(BaseModel):
     fecha: date
-    formato: Literal["5", "7", "11"]
+    formato: Literal["7", "5", "11"]
     tipo: Literal["Amistoso", "Competicion"]
     equipo: str = Field(min_length=1)
     tiempo_juego: int = Field(ge=5, le=90)
